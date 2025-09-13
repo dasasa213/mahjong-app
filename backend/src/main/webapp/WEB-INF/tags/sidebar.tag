@@ -16,7 +16,7 @@
       <a href="${pageContext.request.contextPath}/admin/accounts">アカウント登録</a>
     </li>
     <li class="${active=='groups' ? 'active' : ''}">
-      <a href="${pageContext.request.contextPath}/admin/groups">グループ編集</a>
+      <a href="${pageContext.request.contextPath}/admin/group/edit">グループ編集</a>
     </li>
     <!-- 追加メニューはここに -->
   </ul>

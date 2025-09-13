@@ -7,7 +7,6 @@
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/accounts.css"/>
 
   <section class="page-wrap">
-    <h2 class="page-title">アカウント登録</h2>
 
     <c:if test="${not empty error}">
       <div class="alert alert-error" role="alert">${error}</div>
