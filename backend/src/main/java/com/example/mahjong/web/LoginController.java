@@ -13,16 +13,15 @@ public class LoginController {
     public LoginController(AuthService auth){ this.auth = auth; }
 
     @GetMapping("/main/login-in")
-    public String showLogin(@RequestParam(value="error", required=false) String error, Model model){
-        if (error != null) model.addAttribute("error", "ユーザIDまたはパスワードが正しくありません。");
+    public String loginPage() {
         return "login-in";
     }
 
     @PostMapping("/login")
-    public String doLogin(@RequestParam("loginId") String loginId,
+    public String doLogin(@RequestParam("loginName") String loginName,
                           @RequestParam("password") String password,
                           HttpSession session, RedirectAttributes ra){
-        var r = auth.login(loginId, password);
+        var r = auth.login(loginName, password);
         if (r.ok()){
             session.setAttribute("userId", r.userId());
             session.setAttribute("userName", r.userName());

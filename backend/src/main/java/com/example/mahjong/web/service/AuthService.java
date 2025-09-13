@@ -10,8 +10,8 @@ public class AuthService {
     private final UserDao dao;
     public AuthService(UserDao dao){ this.dao = dao; }
 
-    public Result login(String id, String password){
-        User u = dao.findById(id);
+    public Result login(String name, String password){
+        User u = dao.findByName(name);
         if (u != null && password.equals(u.getPassword())) {
             return new Result(true, u.getId(), u.getName(), u.getType());
         }

@@ -9,8 +9,8 @@ public class UserDao {
     private final JdbcTemplate jdbc;
     public UserDao(JdbcTemplate jdbc){ this.jdbc = jdbc; }
 
-    public User findById(String id){
-        var sql = "SELECT id, name, password, type FROM daa_user_knr WHERE id = ?";
+    public User findByName(String name){
+        var sql = "SELECT id, name, password, type FROM daa_user_knr WHERE name = ?";
         return jdbc.query(sql, rs -> {
             if (rs.next()) {
                 User u = new User();
@@ -21,6 +21,6 @@ public class UserDao {
                 return u;
             }
             return null;
-        }, id);
+        }, name);
     }
 }

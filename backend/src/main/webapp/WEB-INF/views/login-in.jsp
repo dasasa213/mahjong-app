@@ -30,7 +30,7 @@
       <form method="post" action="${pageContext.request.contextPath}/login">
         <div class="row">
           <div class="label">ユーザ</div>
-          <div class="input"><input type="text" name="loginId" required autofocus placeholder="例）00001" value="${param.loginId}"></div>
+          <div class="input"><input type="text" name="loginName" required autofocus placeholder="例）岡部" value="${param.loginName}"></div>
         </div>
         <div class="row">
           <div class="label">パスワード</div>
@@ -38,7 +38,6 @@
         </div>
         <div class="actions"><button class="btn" type="submit">ログイン</button></div>
         <c:if test="${not empty error}"><div class="error">${error}</div></c:if>
-        <div class="note">※ 例：00001/0000 → 管理者（type=1）、00002/0000 → 利用者（type=2）</div>
       </form>
     </div>
   </div>
