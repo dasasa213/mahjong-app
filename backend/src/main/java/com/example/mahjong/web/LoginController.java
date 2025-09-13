@@ -1,13 +1,10 @@
 package com.example.mahjong.web;
 
-import com.example.mahjong.web.model.LoginUser;
 import com.example.mahjong.web.repository.UserRepository;
-import com.example.mahjong.web.service.AuthService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/main")
@@ -38,7 +35,7 @@ public class LoginController {
         session.setAttribute("userName", u.name());
         session.setAttribute("groupId", u.groupId());
         session.setAttribute("groupName", u.groupName());
-        session.setAttribute("userType", u.type());
+        session.setAttribute("type", String.valueOf(u.type()).trim());
         return "redirect:/admin/home";
     }
 

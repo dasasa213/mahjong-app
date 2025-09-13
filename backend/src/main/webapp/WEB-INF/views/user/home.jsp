@@ -3,5 +3,5 @@
 <body>
 <h2>利用者ホーム（仮）</h2>
 <p>ようこそ、<%= session.getAttribute("userName") %> さん（USER）</p>
-<p><a href="<%= request.getContextPath() %>/logout">ログアウト</a></p>
+<p><a href="<%= request.getContextPath() %>/main/logout">ログアウト</a></p>
 </body></html>
