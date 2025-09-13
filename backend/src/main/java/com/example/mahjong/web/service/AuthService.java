@@ -1,14 +1,14 @@
 package com.example.mahjong.web.service;
 
 
-import com.example.mahjong.web.dao.UserDao;
 import com.example.mahjong.web.model.User;
+import com.example.mahjong.web.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AuthService {
-    private final UserDao dao;
-    public AuthService(UserDao dao){ this.dao = dao; }
+    private final UserRepository dao;
+    public AuthService(UserRepository dao){ this.dao = dao; }
 
     public Result login(String name, String password){
         User u = dao.findByName(name);

@@ -30,7 +30,7 @@
             <td>
               <c:choose>
                 <c:when test="${m.userType == '1'}">管理者</c:when>
-                <c:otherwise>一般</c:otherwise>
+                <c:otherwise>利用者</c:otherwise>
               </c:choose>
             </td>
           </tr>

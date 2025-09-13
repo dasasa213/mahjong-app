@@ -1,8 +1,10 @@
 package com.example.mahjong.web.repository;
 
 import com.example.mahjong.web.model.LoginUser;
+import com.example.mahjong.web.model.User;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -13,6 +15,21 @@ public class UserRepository {
 
     public UserRepository(JdbcTemplate jdbc) {
         this.jdbc = jdbc;
+    }
+
+    public User findByName(String name){
+        var sql = "SELECT id, name, password, type FROM daa_user_knr WHERE name = ?";
+        return jdbc.query(sql, rs -> {
+            if (rs.next()) {
+                User u = new User();
+                u.setId(rs.getString("id"));
+                u.setName(rs.getString("name"));
+                u.setPassword(rs.getString("password")); // プレーン比較
+                u.setType(rs.getString("type"));         // '1' or '2'
+                return u;
+            }
+            return null;
+        }, name);
     }
 
     public Optional<LoginUser> findByNameAndPassword(String name, String password) {
@@ -42,5 +59,23 @@ public class UserRepository {
         if (v == null) return null;
         if (v instanceof Number num) return num.intValue();
         return Integer.valueOf(v.toString().trim()); // "1" → 1
+    }
+
+    // 最大ID+1 を取得（FOR UPDATE で競合回避）
+    @Transactional
+    public int nextNumericIdForUpdate() {
+        Integer max = jdbc.queryForObject(
+                "SELECT COALESCE(MAX(CAST(id AS UNSIGNED)), 0) FROM daa_user_knr FOR UPDATE",
+                Integer.class
+        );
+        return (max == null ? 0 : max) + 1;
+    }
+
+    // 追加：ユーザー登録（type=2固定、groupidはセッションのもの）
+    public void insertUser(String id, String name, String password, String groupId, String type) {
+        jdbc.update(
+                "INSERT INTO daa_user_knr (id, name, password, groupid, type) VALUES (?, ?, ?, ?, ?)",
+                id, name, password, groupId, type
+        );
     }
 }

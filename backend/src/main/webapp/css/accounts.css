@@ -1,0 +1,151 @@
+/* ベースカラー変数 */
+:root {
+  --card-bg: #fff;
+  --text: #222;
+  --muted: #666;
+  --border: #e5e7eb;
+  --accent: #2563eb;           /* ブルー */
+  --accent-pressed: #1d4ed8;
+  --success-bg: #ecfdf5;
+  --success-bd: #10b981;
+  --error-bg: #fef2f2;
+  --error-bd: #ef4444;
+  --shadow: 0 8px 24px rgba(0,0,0,.08);
+}
+
+/* ページ全体の余白 */
+.page-wrap {
+  max-width: 720px;
+  margin: 16px auto 64px;
+  padding: 0 16px;
+}
+
+.page-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 8px 0 16px;
+  color: var(--text);
+}
+
+/* アラート */
+.alert {
+  padding: 12px 14px;
+  border-radius: 10px;
+  margin: 12px 0;
+  border: 1px solid var(--border);
+  background: #fafafa;
+}
+.alert-success {
+  background: var(--success-bg);
+  border-color: var(--success-bd);
+  color: #065f46;
+}
+.alert-error {
+  background: var(--error-bg);
+  border-color: var(--error-bd);
+  color: #991b1b;
+}
+
+/* フォーム全体をカード風に */
+.form-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  padding: 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;   /* 2列レイアウト */
+  gap: 16px 20px;
+}
+
+/* 名前入力は1行フル幅 */
+.field-full {
+  grid-column: 1 / -1;
+}
+
+/* フィールド共通 */
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.form-label {
+  font-size: 14px;
+  color: var(--text);
+}
+.req {
+  color: var(--error-bd);
+  margin-left: 4px;
+  font-weight: 600;
+}
+
+.input {
+  height: 44px;                       /* タップしやすい高さ */
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 16px;                     /* モバイルでの自動ズーム防止 */
+  outline: none;
+  transition: border-color .15s ease, box-shadow .15s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+.input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(37,99,235,.18);
+}
+
+.help {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+/* ボタン */
+.btn-primary {
+  appearance: none;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 18px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  background: var(--accent);
+  cursor: pointer;
+  min-width: 120px;
+  transition: transform .03s ease, background .15s ease, box-shadow .15s ease;
+  box-shadow: 0 6px 14px rgba(37,99,235,.25);
+}
+.btn-primary:active {
+  transform: translateY(1px);
+  background: var(--accent-pressed);
+}
+
+/* ボタン行 */
+.form-actions {
+  grid-column: 1 / -1;
+  text-align: right;
+  margin-top: 4px;
+}
+
+/* スマホ対応 */
+@media (max-width: 640px) {
+  .form-card {
+    grid-template-columns: 1fr;       /* 1列に落とす */
+    padding: 16px;
+    gap: 12px;
+    border-radius: 14px;
+  }
+  .form-actions {
+    text-align: right;
+  }
+}
+
+/* さらに小さい端末でボタンを幅いっぱい */
+@media (max-width: 360px) {
+  .btn-primary {
+    width: 100%;
+  }
+}
