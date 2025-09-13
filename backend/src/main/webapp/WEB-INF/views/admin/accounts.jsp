@@ -15,7 +15,7 @@
       <div class="alert alert-success" role="status">${success}</div>
     </c:if>
 
-    <form class="form-card" action="${pageContext.request.contextPath}/admin/accounts" method="post" novalidate>
+    <form class="form-card" action="${pageContext.request.contextPath}/account/register" method="post" novalidate>
       <!-- 1行目：名前 -->
       <div class="form-field field-full">
         <label for="name" class="form-label">名前 <span class="req">*</span></label>

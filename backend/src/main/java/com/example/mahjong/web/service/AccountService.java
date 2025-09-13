@@ -12,8 +12,19 @@ public class AccountService {
 
     @Transactional
     public String register(String name, String plainPassword, String groupId) {
-        int next = repo.nextNumericIdForUpdate();       // MAX(id)+1（悲観ロック）
-        String newId = String.format("%05d", next);     // 5桁0埋め
+        // --- サーバ側バリデーション ---
+        if (groupId == null || groupId.isBlank()) {
+            throw new IllegalArgumentException("グループIDが取得できません。ログインし直してください。");
+        }
+        if (name == null || name.isBlank() || name.length() > 10) {
+            throw new IllegalArgumentException("名前は1〜10文字で入力してください。");
+        }
+        if (plainPassword == null || plainPassword.isBlank() || plainPassword.length() > 10) {
+            throw new IllegalArgumentException("パスワードは1〜10文字で入力してください。");
+        }
+
+        int next = repo.nextNumericIdForUpdate();   // 同一Tx内
+        String newId = String.format("%05d", next); // 5桁0埋め
         repo.insertUser(newId, name, plainPassword, groupId, "2"); // type=2固定
         return newId;
     }
