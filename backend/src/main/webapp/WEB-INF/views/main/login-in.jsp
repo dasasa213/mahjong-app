@@ -27,7 +27,7 @@
   <div class="frame">
     <div class="card">
       <h1>ログイン</h1>
-      <form method="post" action="${pageContext.request.contextPath}/login">
+      <form method="post" action="${pageContext.request.contextPath}/main/login">
         <div class="row">
           <div class="label">ユーザ</div>
           <div class="input"><input type="text" name="loginName" required autofocus placeholder="例）岡部" value="${param.loginName}"></div>

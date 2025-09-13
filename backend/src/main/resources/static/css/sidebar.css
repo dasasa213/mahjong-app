@@ -1,0 +1,92 @@
+/* サイドバー */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 220px;   /* 開いているとき */
+  height: 100%;
+  background-color: #333;
+  color: #fff;
+  transition: width 0.3s ease;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.sidebar.closed {
+  width: 80px;   /* 閉じたときに「メニュー☰」が収まる幅 */
+}
+
+/* 閉じたときはメニューリスト非表示 */
+.sidebar.closed .menu-items {
+  display: none;
+}
+
+/* ヘッダ */
+.menu-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  background: #444;
+  color: #fff;
+  font-weight: bold;
+  border-bottom: 1px solid #555;
+}
+
+.menu-title {
+  font-size: 14px;
+  color: #fff;   /* 白固定 */
+}
+
+.menu-toggle {
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 20px;
+}
+
+/* メニューリスト */
+.menu-items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.menu-items li {
+  padding: 8px 16px;
+}
+
+/* リンクの色統一 */
+.sidebar a {
+  color: #fff;              /* 白固定 */
+  text-decoration: none;
+  display: block;
+}
+
+.sidebar a:visited {
+  color: #fff;              /* 訪問済みでも白 */
+}
+
+.sidebar a:hover {
+  color: #ffcc00;           /* ホバー時は黄色強調 */
+}
+
+/* アクティブなリンク（現在ページ） */
+.sidebar a.active {
+  background-color: #007bff; /* 青背景 */
+  color: #fff;
+  font-weight: bold;
+  border-radius: 4px;
+}
+
+/* メインコンテンツ */
+.content {
+  margin-left: 220px;
+  padding: 20px;
+  transition: margin-left 0.3s ease;
+}
+
+.sidebar.closed ~ .content {
+  margin-left: 80px;   /* サイドバー閉じ時 */
+}
