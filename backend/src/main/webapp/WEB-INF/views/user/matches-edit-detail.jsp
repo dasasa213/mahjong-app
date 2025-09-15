@@ -74,12 +74,18 @@
       </div>
     </div>
 
-    <!-- ボタン（順位計算は不要とのことなので非表示） -->
     <div class="actions">
-      <button type="button" id="btnCalc" class="btn primary">計算</button>
-      <button type="button" id="btnSave" class="btn success">登録</button>
+      <button id="calcBtn" type="button" class="btn primary">計算</button>
+      <button id="saveBtn" type="button" class="btn success">登録</button>
     </div>
   </form>
+
+  <u:matchTables
+      players="${players}"
+      initialRows="4"
+      calcBtnId="calcBtn"
+      saveBtnId="saveBtn"
+      idPrefix="mt" />
 
   <!-- ▼ この下に後続で「タブ + 点棒/順位/点数テーブル」を追加していく予定 -->
   <div id="tablesArea" class="mt"></div>
@@ -117,20 +123,4 @@
     .mt{margin-top:24px}
   </style>
 
-  <script>
-    // 仮ロジック：今は動作確認だけ
-    document.getElementById('btnCalc')?.addEventListener('click', function(){
-      // 後続のテーブル計算に接続予定。いまは簡易表示だけ。
-      alert('計算（仮）: 点棒→順位/点数の計算は後で実装します。');
-    });
-
-    document.getElementById('btnSave')?.addEventListener('click', function(){
-      // 後で POST に切り替え予定。フォーム値は console 出力だけしておく。
-      const fd = new FormData(document.getElementById('editForm'));
-      const obj = {};
-      fd.forEach((v,k)=>obj[k]=v);
-      console.log('登録（仮）payload:', obj);
-      alert('登録（仮）: まだサーバ保存は実装していません。');
-    });
-  </script>
 </u:layout>

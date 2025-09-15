@@ -4,7 +4,6 @@
 <%@ taglib prefix="u" tagdir="/WEB-INF/tags/user" %>
 
 <u:layout title="対局編集" active="${active}">
-  <h2>対局編集</h2>
 
   <!-- フラッシュメッセージ -->
   <c:if test="${not empty success}">
