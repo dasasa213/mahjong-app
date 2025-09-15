@@ -18,13 +18,7 @@ public class UserNavController {
     @GetMapping("/matches/new")
     public String newMatch(Model model){
         model.addAttribute("active", "new");
-        return "user/matches-new";
-    }
-
-    @GetMapping("/matches/edit")
-    public String editMatch(Model model){
-        model.addAttribute("active", "edit");
-        return "user/matches-edit";
+        return "redirect:/user/newgame/date";
     }
 
     @GetMapping("/stats")
