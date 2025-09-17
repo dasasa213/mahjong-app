@@ -2,11 +2,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="u" tagdir="/WEB-INF/tags/user" %>
 
-<%-- 期待するモデル:
-     - game : { id, gamedate(LocalDate), gameno, rate, points, returnpoints, uma1, uma2 }
-     - players : List<String>（後続の表で使用予定）
- --%>
-
 <u:layout title="対局編集" active="${active}">
 
   <c:if test="${not empty success}">
@@ -23,15 +18,13 @@
     <!-- 日付 -->
     <div class="field full">
       <label>対局日</label>
-      <input type="date" name="gamedate"
-             value="<c:out value='${empty game.gamedate ? "" : game.gamedate}'/>" />
+      <input type="date" name="gamedate" value="<c:out value='${saveTablesRequest.header.gamedate}'/>" readonly />
     </div>
 
     <!-- 回数 -->
     <div class="field full">
       <label>回</label>
-      <input type="number" name="gameno" min="1" step="1"
-             value="<c:out value='${empty game.gameno ? 1 : game.gameno}'/>" />
+      <input type="number" name="gameno" value="<c:out value='${saveTablesRequest.header.gameno}'/>" readonly />
     </div>
 
     <!-- レート -->
@@ -39,9 +32,8 @@
       <div class="field">
         <label>レート</label>
         <div class="input-with-suffix">
-          <input type="number" name="rate" min="0" step="1"
-                 value="<c:out value='${empty game.rate ? 50 : game.rate}'/>" />
-          <span class="suffix">ペソ</span>
+        <input type="number" name="rate" value="<c:out value='${saveTablesRequest.header.rate}'/>" />
+        <span class="suffix">ペソ</span>
         </div>
       </div>
     </div>
@@ -51,11 +43,9 @@
       <div class="field">
         <label>配点 / 返し点</label>
         <div class="pair">
-          <input type="number" name="points" min="0" step="100"
-                 value="<c:out value='${empty game.points ? 25000 : game.points}'/>" />
+          <input type="number" name="points" value="<c:out value='${saveTablesRequest.header.points}'/>" />
           <span class="pair-sep">／</span>
-          <input type="number" name="returnpoints" min="0" step="100"
-                 value="<c:out value='${empty game.returnpoints ? 30000 : game.returnpoints}'/>" />
+          <input type="number" name="returnpoints" value="<c:out value='${saveTablesRequest.header.returnpoints}'/>" />
         </div>
       </div>
     </div>
@@ -65,11 +55,9 @@
       <div class="field">
         <label>ウマ</label>
         <div class="pair">
-          <input type="number" name="uma1" min="0" step="1"
-                 value="<c:out value='${empty game.uma1 ? 30 : game.uma1}'/>" />
-          <span class="pair-sep">／</span>
-          <input type="number" name="uma2" min="0" step="1"
-                 value="<c:out value='${empty game.uma2 ? 10 : game.uma2}'/>" />
+          <input type="number" name="uma1" value="<c:out value='${saveTablesRequest.header.uma1}'/>" />
+          <span class="pair-sep">／</span>>
+          <input type="number" name="uma2" value="<c:out value='${saveTablesRequest.header.uma2}'/>" />
         </div>
       </div>
     </div>

@@ -4,6 +4,7 @@ package com.example.mahjong.web.service;
 import com.example.mahjong.web.model.GameRecord;
 import com.example.mahjong.web.repository.GamePlayersRepository;
 import com.example.mahjong.web.repository.GameRecordRepository;
+import com.example.mahjong.web.repository.SaveTablesRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,11 +16,12 @@ public class GameRecordService {
 
     private final GameRecordRepository recordRepo;
     private final GamePlayersRepository playersRepo;
+    private final SaveTablesRepository saveRepo;
 
-    public GameRecordService(GameRecordRepository recordRepo,
-                             GamePlayersRepository playersRepo) {
+    public GameRecordService(GameRecordRepository recordRepo, GamePlayersRepository playersRepo, SaveTablesRepository saveRepo) {
         this.recordRepo = recordRepo;
         this.playersRepo = playersRepo;
+        this.saveRepo = saveRepo;
     }
 
     public GameRecord findById(String id, String groupId) {
@@ -30,10 +32,12 @@ public class GameRecordService {
     }
 
     @Transactional
-    public int deleteById(String id, String groupId) {
+    public int deleteById(String game_id, String groupId) {
         // 子を先に消す
-        playersRepo.deleteByGameId(id);
+        playersRepo.deleteByGameId(game_id);
+        saveRepo.deleteALL(game_id);
+
         // 親を削除
-        return recordRepo.deleteById(id, groupId);
+        return recordRepo.deleteById(game_id, groupId);
     }
 }

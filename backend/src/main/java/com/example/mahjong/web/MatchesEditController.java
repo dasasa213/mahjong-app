@@ -1,9 +1,11 @@
 // src/main/java/com/example/mahjong/web/user/MatchesEditController.java
 package com.example.mahjong.web;
 
+import com.example.mahjong.web.model.SaveTablesRequest;
 import com.example.mahjong.web.service.GamePlayerService;
 import com.example.mahjong.web.service.GameRecordService;
 import com.example.mahjong.web.model.GameRecord;
+import com.example.mahjong.web.service.SaveTablesService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,10 +21,12 @@ public class MatchesEditController {
 
     private final GameRecordService recordService;
     private final GamePlayerService playerService;
+    private final SaveTablesService saveService;
 
-    public MatchesEditController(GameRecordService recordService, GamePlayerService playerService) {
+    public MatchesEditController(GameRecordService recordService, GamePlayerService playerService, SaveTablesService saveService) {
         this.recordService = recordService;
         this.playerService = playerService;
+        this.saveService = saveService;
     }
 
     /** 検索画面（一覧） */
@@ -59,7 +63,21 @@ public class MatchesEditController {
             model.addAttribute("error", "指定の対局が見つかりません。");
             return "user/matches-edit"; // 一覧に戻すなど
         }
-        model.addAttribute("game", game);
+
+        //詰め替え
+        SaveTablesRequest saveTablesRequest = new SaveTablesRequest();
+        saveTablesRequest.gameId = game.getId();
+        saveTablesRequest.header.gamedate = game.getGamedate();
+        saveTablesRequest.header.gameno = game.getGameno();
+        saveTablesRequest.header.points = game.getPoints();
+        saveTablesRequest.header.returnpoints = game.getReturnpoints();
+        saveTablesRequest.header.rate = game.getRate();
+        saveTablesRequest.header.uma1 = game.getUma1();
+        saveTablesRequest.header.uma2 = game.getUma2();
+
+        saveTablesRequest = saveService.findGameAll(saveTablesRequest);
+
+        model.addAttribute("saveTablesRequest", saveTablesRequest);
         model.addAttribute("players", playerService.listPlayerNames(id));
         model.addAttribute("active", "matches");
         return "user/matches-edit-detail";
