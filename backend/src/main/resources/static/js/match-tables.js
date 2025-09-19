@@ -374,8 +374,57 @@
     init(opts) {
       const app = new MatchTablesApp(opts);
       app.build();
+      if (opts.prefill) applyPrefill(app, opts);
       return app;
     }
   };
+
+  // ============ prefill helper ============
+  function applyPrefill(app, opts) {
+    console.log('[applyPrefill] start =', opts.prefill);
+
+    const prefill = opts.prefill || {};
+    const norm = s => String(s ?? '').trim();
+
+    // players 並び → 列index（0-based）
+    const nameToCol = new Map();
+    app.players.forEach((nm, idx) => nameToCol.set(norm(nm), idx));
+    console.log('tables:', !!app.scoreTable, !!app.rankTable, !!app.pointsTable);
+    console.log('players map:', Array.from(nameToCol.entries()));
+
+    // 行が足りなければ増やす（addOneRow は3テーブル同時に増える）
+    const ensureRows = (table, needRows) => {
+      const cur = table.tBodies[0].rows.length;
+      for (let i = cur; i < needRows; i++) app.addOneRow();
+    };
+
+    // 1タブ反映（★ "e" は forEach の中でだけ使う）
+    const fillOne = (items, table, label) => {
+      if (!Array.isArray(items) || !table) return;
+
+      const maxRow = items.reduce((m, it) => Math.max(m, Number(it.row || 0)), 0);
+      if (maxRow > 0) ensureRows(table, maxRow);
+
+      items.forEach(it => {
+        const row1 = Number(it.row);
+        const col  = nameToCol.get(norm(it.name));
+        console.log('fill', label, { row: row1, name: it.name, col, value: it.value });
+
+        if (!row1 || col == null) return;
+
+        const tr = table.tBodies[0].querySelector(`tr[data-row="${row1}"]`);
+        if (!tr) return;
+
+        const inp = tr.cells[col + 1]?.querySelector('input'); // +1: 見出し列
+        if (!inp) return;
+
+        inp.value = (it.value ?? '') + '';
+      });
+    };
+
+    fillOne(prefill.score,  app.scoreTable,  'score');
+    fillOne(prefill.rank,   app.rankTable,   'rank');
+    fillOne(prefill.points, app.pointsTable, 'points');
+  }
 
 })(window);

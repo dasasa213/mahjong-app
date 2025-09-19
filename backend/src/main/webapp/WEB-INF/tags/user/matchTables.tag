@@ -7,16 +7,60 @@
 <%@ attribute name="calcBtnId"   required="false" type="java.lang.String"  %>
 <%@ attribute name="saveBtnId"   required="false" type="java.lang.String"  %>
 <%@ attribute name="idPrefix"    required="false" type="java.lang.String"  %>
+<%@ attribute name="saveTablesRequest" required="true" type="com.example.mahjong.web.model.SaveTablesRequest" %>
 
 <c:set var="pid"  value="${empty idPrefix ? 'mt' : idPrefix}" />
 <c:set var="rows" value="${empty initialRows ? 4 : initialRows}" />
 
+<c:set var="prefillScore">
+  [
+  <c:forEach var="r" items="${saveTablesRequest.scores}" varStatus="s">
+    {"row":${r.row_num},"name":"${fn:escapeXml(r.name)}","value":
+      <c:choose>
+        <c:when test="${empty r.value}">null</c:when>
+        <c:otherwise>${r.value}</c:otherwise>
+      </c:choose>
+    }<c:if test="${!s.last}">,</c:if>
+  </c:forEach>
+  ]
+</c:set>
+
+<c:set var="prefillRank">
+  [
+  <c:forEach var="r" items="${saveTablesRequest.rankings}" varStatus="s">
+    {"row":${r.row_num},"name":"${fn:escapeXml(r.name)}","value":
+      <c:choose>
+        <c:when test="${empty r.value}">null</c:when>
+        <c:otherwise>${r.value}</c:otherwise>
+      </c:choose>
+    }<c:if test="${!s.last}">,</c:if>
+  </c:forEach>
+  ]
+</c:set>
+
+<c:set var="prefillPoints">
+  [
+  <c:forEach var="r" items="${saveTablesRequest.points}" varStatus="s">
+    {"row":${r.row_num},"name":"${fn:escapeXml(r.name)}","value":
+      <c:choose>
+        <c:when test="${empty r.value}">null</c:when>
+        <c:otherwise>${r.value}</c:otherwise>
+      </c:choose>
+    }<c:if test="${!s.last}">,</c:if>
+  </c:forEach>
+  ]
+</c:set>
+
 <c:set var="playersJson">
-  [<c:forEach var="p" items="${players}" varStatus="s">"${fn:escapeXml(p)}"<c:if test="${!s.last}">,</c:if></c:forEach>]
+  [
+    <c:forEach var="p" items="${players}" varStatus="s">
+      "${fn:escapeXml(fn:trim(p))}"<c:if test="${!s.last}">,</c:if>
+    </c:forEach>
+  ]
 </c:set>
 
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/match-tables.css" />
-<script src="${pageContext.request.contextPath}/js/match-tables.js"></script>
+<script src="${pageContext.request.contextPath}/js/match-tables.js?v=20250920"></script>
 
 <!-- ★ container の id を JS と一致させる -->
 <div id="${pid}-container"
@@ -59,7 +103,12 @@
         calcBtnId: '${empty calcBtnId ? "" : calcBtnId}',
         saveBtnId: '${empty saveBtnId ? "" : saveBtnId}'
       },
-      players: ${playersJson}
+      players: ${playersJson},
+      prefill: {
+              score:  ${prefillScore},
+              rank:   ${prefillRank},
+              points: ${prefillPoints}
+      }
     });
   });
 </script>

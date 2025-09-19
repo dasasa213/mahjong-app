@@ -73,7 +73,8 @@
       initialRows="4"
       calcBtnId="calcBtn"
       saveBtnId="saveBtn"
-      idPrefix="mt" />
+      idPrefix="mt"
+      saveTablesRequest="${saveTablesRequest}" />
 
   <!-- ▼ この下に後続で「タブ + 点棒/順位/点数テーブル」を追加していく予定 -->
   <div id="tablesArea" class="mt"></div>
