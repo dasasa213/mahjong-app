@@ -1,7 +1,6 @@
 package com.example.mahjong.web.repository;
 
 
-import com.example.mahjong.web.model.GameRecord;
 import com.example.mahjong.web.model.SaveTablesRequest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -15,16 +14,16 @@ public class SaveTablesRepository {
         this.jdbc = jdbc;
     }
 
-    public int insertScore(String gameId, SaveTablesRequest.Row row) {
-        return jdbc.update("INSERT INTO daa_score (game_id, row_no, name, score) VALUES (?, ?, ?, ?);", gameId, row.row_num, row.name, row.value);
+    public void insertScore(String gameId, SaveTablesRequest.Row row) {
+        jdbc.update("INSERT INTO daa_score (game_id, row_no, name, score) VALUES (?, ?, ?, ?);", gameId, row.row_num, row.name, row.value);
     }
 
-    public int insertRanking(String gameId, SaveTablesRequest.Row row) {
-        return jdbc.update("INSERT INTO daa_ranking (game_id, row_no, name, rank_no) VALUES (?, ?, ?, ?);", gameId, row.row_num, row.name, row.value);
+    public void insertRanking(String gameId, SaveTablesRequest.Row row) {
+        jdbc.update("INSERT INTO daa_ranking (game_id, row_no, name, rank_no) VALUES (?, ?, ?, ?);", gameId, row.row_num, row.name, row.value);
     }
 
-    public int insertPoint(String gameId, SaveTablesRequest.Row row) {
-        return jdbc.update("INSERT INTO daa_point (game_id, row_no, name, point) VALUES (?, ?, ?, ?);", gameId, row.row_num, row.name, row.value);
+    public void insertPoint(String gameId, SaveTablesRequest.Row row) {
+        jdbc.update("INSERT INTO daa_point (game_id, row_no, name, point) VALUES (?, ?, ?, ?);", gameId, row.row_num, row.name, row.value);
     }
 
     public void deleteALL(String game_id) {
@@ -33,14 +32,14 @@ public class SaveTablesRepository {
         deletePoint(game_id);
     }
 
-    public int deleteScore(String game_id) {
-        return jdbc.update("DELETE FROM daa_score WHERE game_id = ?", game_id);
+    public void deleteScore(String game_id) {
+        jdbc.update("DELETE FROM daa_score WHERE game_id = ?", game_id);
     }
-    public int deleteRanking(String game_id) {
-        return jdbc.update("DELETE FROM daa_ranking WHERE game_id = ?", game_id);
+    public void deleteRanking(String game_id) {
+        jdbc.update("DELETE FROM daa_ranking WHERE game_id = ?", game_id);
     }
-    public int deletePoint(String game_id) {
-        return jdbc.update("DELETE FROM daa_point WHERE game_id = ?", game_id);
+    public void deletePoint(String game_id) {
+        jdbc.update("DELETE FROM daa_point WHERE game_id = ?", game_id);
     }
 
     public SaveTablesRequest findGame(SaveTablesRequest saveTablesRequest, String game_id) {
