@@ -19,7 +19,7 @@
       <a href="${pageContext.request.contextPath}/user/matches/edit">対局編集</a>
     </li>
     <li class="${active=='stats' ? 'active' : ''}">
-      <a href="${pageContext.request.contextPath}/user/stats">総合成績</a>
+      <a href="${pageContext.request.contextPath}/user/overall">総合成績</a>
     </li>
     <!-- 追加メニューはここに -->
   </ul>
