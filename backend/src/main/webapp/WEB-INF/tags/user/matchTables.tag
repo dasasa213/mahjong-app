@@ -60,7 +60,8 @@
 </c:set>
 
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/match-tables.css" />
-<script src="${pageContext.request.contextPath}/js/match-tables.js?v=20250920"></script>
+<script src="${pageContext.request.contextPath}/js/match-tables.js"></script>
+<script src="${pageContext.request.contextPath}/js/mt-submit.js"></script>
 
 <!-- ★ container の id を JS と一致させる -->
 <div id="${pid}-container"

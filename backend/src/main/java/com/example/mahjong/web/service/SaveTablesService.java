@@ -16,4 +16,22 @@ public class SaveTablesService {
     public SaveTablesRequest findGameAll(SaveTablesRequest saveTablesRequest){
         return saveRepo.findGame(saveTablesRequest, saveTablesRequest.gameId);
     }
+
+    public  void deleteAll(String game_id){
+        saveRepo.deleteALL(game_id);
+    }
+
+    public  void insertAll(SaveTablesRequest saveTablesRequest){
+        for (SaveTablesRequest.Row r : saveTablesRequest.getScores()) {
+            saveRepo.insertScore(saveTablesRequest.getGameId(), r);
+        }
+        // rankings
+        for (SaveTablesRequest.Row r : saveTablesRequest.getRankings()) {
+            saveRepo.insertRanking(saveTablesRequest.getGameId(), r);
+        }
+        // points
+        for (SaveTablesRequest.Row r : saveTablesRequest.getPoints()) {
+            saveRepo.insertPoint(saveTablesRequest.getGameId(), r);
+        }
+    }
 }

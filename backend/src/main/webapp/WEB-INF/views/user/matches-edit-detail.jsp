@@ -12,8 +12,10 @@
   </c:if>
 
   <!-- 上部フォーム（計算/登録は仮） -->
-  <form id="editForm" class="head-form" autocomplete="off">
-    <input type="hidden" name="id" value="${game.id}"/>
+  <form id="editForm" class="head-form" autocomplete="off" action="${pageContext.request.contextPath}/user/matches/save" method="post">
+    <input type="hidden" name="id"
+           value="${empty saveTablesRequest.gameId ? game.id : saveTablesRequest.gameId}"/>
+    <input type="hidden" id="savePayload" name="payload"/>
 
     <!-- 日付 -->
     <div class="field full">

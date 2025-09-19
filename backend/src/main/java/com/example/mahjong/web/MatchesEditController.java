@@ -6,6 +6,9 @@ import com.example.mahjong.web.service.GamePlayerService;
 import com.example.mahjong.web.service.GameRecordService;
 import com.example.mahjong.web.model.GameRecord;
 import com.example.mahjong.web.service.SaveTablesService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -101,5 +104,24 @@ public class MatchesEditController {
         if (rows > 0) ra.addFlashAttribute("success", "ID " + id + " を削除しました。");
         else ra.addFlashAttribute("error", "削除対象が見つかりませんでした。");
         return "redirect:/user/matches/edit?from=" + fromStr + "&to=" + toStr + "&order=" + order; // ★保持
+    }
+
+    @PostMapping("/save")
+    public String save(@RequestParam("payload") String payloadJson,
+                       @RequestParam("id") String gameId,
+                       RedirectAttributes ra) throws Exception {
+        ObjectMapper om = new ObjectMapper();
+        // LocalDate を "yyyy-MM-dd" で受け取るため
+        om.registerModule(new JavaTimeModule());
+        om.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+        SaveTablesRequest req = om.readValue(payloadJson, SaveTablesRequest.class);
+        req.gameId = gameId;
+
+        saveService.deleteAll(req.gameId);
+        saveService.insertAll(req);
+
+        ra.addFlashAttribute("success", "保存しました");
+        return "redirect:/user/matches/edit/" + req.getGameId();
     }
 }
