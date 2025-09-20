@@ -1,19 +1,44 @@
 spring:
+  application:
+    name: mahjong
   datasource:
-    url: jdbc:mysql://localhost:3306/mahjong
-      ?useSSL=false
-      &allowPublicKeyRetrieval=true
-      &characterEncoding=utf8
-      &serverTimezone=Asia/Tokyo
-    username: app
-    password: app
+    # ← ゼロ(0) に修正済み。oではありません
+    url: jdbc:mysql://mahjongdb.cr2u8q2ke025.ap-southeast-2.rds.amazonaws.com:3306/mahjong?useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=utf8&serverTimezone=Asia/Tokyo
+    username: admin
+    password: OKB_dikc_0912
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      connection-test-query: SELECT 1
+      validation-timeout: 5000
+      initialization-fail-timeout: 0
+
   jpa:
     hibernate:
       ddl-auto: none
-  # ログ見やすさ（任意）
+
   jdbc:
     template:
       query-timeout: 5
 
 server:
+  servlet:
+    context-path: /mahjong-deploy
   port: 8080
+
+logging:
+  charset:
+    console: UTF-8
+    file: UTF-8
+
+  web:
+    error:
+      pagefilter:
+        enabled: false
+  boot:
+    web:
+      errorPageFilter:
+        enabled: false
+  mvc:
+    view:
+      prefix: /WEB-INF/views/
+      suffix: .jsp

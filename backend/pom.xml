@@ -12,8 +12,7 @@
     </parent>
 
     <groupId>com.example</groupId>
-    <artifactId>mahjong</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <artifactId>mahjong-deploy</artifactId>
     <packaging>war</packaging>
 
     <properties>
@@ -77,8 +76,12 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.4.0</version>
+                <configuration>
+                    <warName>mahjong-deploy</warName>
+                </configuration>
             </plugin>
         </plugins>
     </build>
