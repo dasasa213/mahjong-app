@@ -1,11 +1,12 @@
-package com.example.mahjong;
+package com.example.mahjong; // ← Controller（com.example.mahjong.web...）の親パッケージに置く
 
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration;
 
-@SpringBootApplication
+
+@SpringBootApplication(exclude = { ErrorMvcAutoConfiguration.class })
 public class MahjongApplication {
     public static void main(String[] args) {
-        SpringApplication.run(MahjongApplication.class, args);
+        org.springframework.boot.SpringApplication.run(MahjongApplication.class, args);
     }
 }
