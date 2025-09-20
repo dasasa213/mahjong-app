@@ -107,7 +107,7 @@
     .list { width:100%; border-collapse:collapse; }
     .list th, .list td { border:1px solid #ddd; padding:6px 8px; text-align:center; }
     .list thead th { background:#f2f6ff; }
-    .ops { display:flex; gap:6px; justify-content:center; }
+    .ops { display:flex; gap:20px; justify-content:center; }
     .btn { padding:6px 10px; border:1px solid #888; background:#fff; cursor:pointer; border-radius:6px; }
     .btn.primary { background:#1967d2; color:#fff; border-color:#1967d2; }
     .btn.danger { background:#d21919; color:#fff; border-color:#d21919; }
@@ -128,7 +128,13 @@
                      background:white; transition:.2s; border-radius:50%; }
     .switch input:checked + .slider { background:#1967d2; }
     .switch input:checked + .slider:before { transform: translateX(24px); }
+
+    /* （任意）スマホは少し広めに： */
+    @media (max-width: 480px) {
+      .ops { gap:26px; }
+    }
   </style>
+
 
   <script>
     function openDeleteModal(btn){

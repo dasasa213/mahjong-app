@@ -2,6 +2,7 @@
 package com.example.mahjong.web.repository;
 
 import com.example.mahjong.web.model.GameRecord;
+import com.example.mahjong.web.model.SaveTablesRequest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -68,6 +69,15 @@ public class GameRecordRepository {
 
     public int deleteById(String id, String groupId) {
         return jdbc.update("DELETE FROM daa_gamerecords WHERE id = ? AND groupid = ?", id, groupId);
+    }
+
+    public int updateById(SaveTablesRequest saveTablesRequest, String gameId, String groupId) {
+        SaveTablesRequest.Header header = saveTablesRequest.header;
+        String sql = """
+        UPDATE daa_gamerecords SET rate = ?, points = ?, returnpoints = ?, uma1 = ?, uma2 = ? WHERE id = ? AND groupid = ?
+        """;
+
+        return jdbc.update(sql, header.rate, header.points, header.returnpoints, header.uma1, header.uma2, gameId, groupId);
     }
 
 }

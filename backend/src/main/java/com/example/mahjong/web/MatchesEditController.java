@@ -109,7 +109,8 @@ public class MatchesEditController {
     @PostMapping("/save")
     public String save(@RequestParam("payload") String payloadJson,
                        @RequestParam("id") String gameId,
-                       RedirectAttributes ra) throws Exception {
+                       RedirectAttributes ra,
+                       HttpSession session) throws Exception {
         ObjectMapper om = new ObjectMapper();
         // LocalDate を "yyyy-MM-dd" で受け取るため
         om.registerModule(new JavaTimeModule());
@@ -118,6 +119,7 @@ public class MatchesEditController {
         SaveTablesRequest req = om.readValue(payloadJson, SaveTablesRequest.class);
         req.gameId = gameId;
 
+        recordService.updateById(req, gameId, (String) session.getAttribute("groupId"));
         saveService.deleteAll(req.gameId);
         saveService.insertAll(req);
 

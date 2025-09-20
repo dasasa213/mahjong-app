@@ -375,6 +375,7 @@
       const app = new MatchTablesApp(opts);
       app.build();
       if (opts.prefill) applyPrefill(app, opts);
+      app.calculateAll();
       return app;
     }
   };

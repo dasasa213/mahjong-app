@@ -2,6 +2,7 @@
 package com.example.mahjong.web.service;
 
 import com.example.mahjong.web.model.GameRecord;
+import com.example.mahjong.web.model.SaveTablesRequest;
 import com.example.mahjong.web.repository.GamePlayersRepository;
 import com.example.mahjong.web.repository.GameRecordRepository;
 import com.example.mahjong.web.repository.SaveTablesRepository;
@@ -39,5 +40,10 @@ public class GameRecordService {
 
         // 親を削除
         return recordRepo.deleteById(game_id, groupId);
+    }
+
+    @Transactional
+    public void updateById(SaveTablesRequest saveTablesRequest, String gameId, String groupId) {
+        recordRepo.updateById(saveTablesRequest, gameId, groupId);
     }
 }
