@@ -26,6 +26,8 @@ server:
   port: 8080
   servlet:
     context-path: /mahjong-deploy
+    session:
+      timeout: 24h
 
 logging:
   charset:
