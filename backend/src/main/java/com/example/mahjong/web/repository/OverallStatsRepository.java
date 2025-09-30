@@ -73,7 +73,7 @@ public class OverallStatsRepository {
     private OverallStats map(ResultSet rs) throws SQLException {
         OverallStats o = new OverallStats();
         o.setUserName(rs.getString("user_name"));
-        o.setTotalPoint(rs.getLong("total_point"));
+        o.setTotalPoint(rs.getBigDecimal("total_point"));
         o.setTotalAmount(rs.getLong("total_amount"));
         o.setAvgRank(rs.getBigDecimal("avg_rank") == null ? BigDecimal.ZERO : rs.getBigDecimal("avg_rank"));
         o.setRate1(rs.getBigDecimal("rate1") == null ? BigDecimal.ZERO : rs.getBigDecimal("rate1"));

@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 public class OverallStats {
     private String userName;
-    private long totalPoint;        // 合計点数
+    private BigDecimal totalPoint;        // 合計点数
     private long totalAmount;       // 合計金額
     private BigDecimal avgRank;     // 平均順位(小数)
     private BigDecimal rate1;       // 1位率(%)
@@ -17,8 +17,8 @@ public class OverallStats {
     // getter / setter
     public String getUserName() { return userName; }
     public void setUserName(String userName) { this.userName = userName; }
-    public long getTotalPoint() { return totalPoint; }
-    public void setTotalPoint(long totalPoint) { this.totalPoint = totalPoint; }
+    public BigDecimal getTotalPoint() { return totalPoint; }
+    public void setTotalPoint(BigDecimal totalPoint) { this.totalPoint = totalPoint; }
     public long getTotalAmount() { return totalAmount; }
     public void setTotalAmount(long totalAmount) { this.totalAmount = totalAmount; }
     public BigDecimal getAvgRank() { return avgRank; }
