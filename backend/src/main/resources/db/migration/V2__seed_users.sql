@@ -1,0 +1,5 @@
+INSERT INTO daa_user_knr (id, name, password, groupid, type) VALUES
+('00001','岡部admin','0000', '00001', '1'),
+('00002','岡部','0000', '00001', '2'),
+('00003','TESTadmin','0000', '00002', '1'),
+('00004','TEST','0000', '00002', '2');

@@ -1,0 +1,54 @@
+/* ============== Header ============== */
+.app-header{
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  height: 56px;
+  display: flex;                    /* 左右に配置 */
+  align-items: center;
+  justify-content: space-between;   /* 左：タイトル / 右：ユーザ情報 */
+  padding: 0 16px;
+  background: #f7f7f7;
+  border-bottom: 1px solid #e3e3e3;
+  color: #222;
+}
+
+.app-header__title{
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;                 /* 左寄せ */
+}
+
+.app-header__right{
+  margin-left: auto;                /* 右端へ寄せる */
+  display: flex;
+  align-items: center;
+  gap: 20px;                        /* ← ユーザ情報とボタンの間隔を広めに */
+  text-align: right;
+  white-space: nowrap;
+}
+
+.app-header__user{
+  font-size: 13px;
+  color: #374151;
+}
+
+.app-header__group{
+  margin-right: 6px;                /* グループ名とボタンの“さらに”微調整 */
+}
+
+.app-header__logout{
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 4px;
+  background: #e53935;
+  color: #fff !important;
+  text-decoration: none;
+  margin-left: 12px;                /* 余白追加（ご要望） */
+}
+.app-header__logout:hover{
+  filter: brightness(0.95);
+}
+
+/* 任意：本文の上側余白 */
+.page-body{ padding: 16px 0 0 16px; }
