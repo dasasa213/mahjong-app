@@ -21,7 +21,7 @@ public class GamePlayersRepository {
                  WHERE type = '2'
                    AND groupid = ?
                    AND name LIKE ?
-                 ORDER BY name
+                 ORDER BY id
             """, (rs,i)->rs.getString(1), groupId, q);
         } else {
             return jdbc.query("""
@@ -29,7 +29,7 @@ public class GamePlayersRepository {
                   FROM daa_user_knr
                  WHERE type = '2'
                    AND name LIKE ?
-                 ORDER BY name
+                 ORDER BY id
             """, (rs,i)->rs.getString(1), q);
         }
     }
