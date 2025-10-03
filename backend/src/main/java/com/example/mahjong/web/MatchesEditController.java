@@ -42,7 +42,7 @@ public class MatchesEditController {
         model.addAttribute("active", "matches-edit");
 
         LocalDate to = (toStr == null || toStr.isBlank()) ? LocalDate.now() : LocalDate.parse(toStr);
-        LocalDate from = (fromStr == null || fromStr.isBlank()) ? to.minusDays(14) : LocalDate.parse(fromStr);
+        LocalDate from = (fromStr == null || fromStr.isBlank()) ? to.minusDays(365) : LocalDate.parse(fromStr);
 
         // order は "asc" / "desc" のみ許可（それ以外は desc にフォールバック）
         order = ("asc".equalsIgnoreCase(order)) ? "asc" : "desc";
