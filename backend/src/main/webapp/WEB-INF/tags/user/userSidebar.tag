@@ -21,6 +21,9 @@
     <li class="${active=='stats' ? 'active' : ''}">
       <a href="${pageContext.request.contextPath}/user/overall">総合成績</a>
     </li>
+    <li class="${active == 'overall' ? 'active' : ''}">
+      <a href="<c:url value='/user/overall/chart'/>">総合成績（グラフ）</a>
+    </li>
     <!-- 追加メニューはここに -->
   </ul>
 </nav>
