@@ -1,42 +1,72 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="u" tagdir="/WEB-INF/tags/user" %>
+<%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="u"  tagdir="/WEB-INF/tags/user" %>
 
 <u:layout title="利用者ホーム" active="home">
-
   <style>
-    .home-section { margin: 20px 0; }
-    .home-section h2 { margin-bottom: 10px; font-size: 1.2em; border-left: 4px solid #2e7d32; padding-left: 6px; }
-    .home-list { list-style: none; padding: 0; }
-    .home-list li { margin: 8px 0; }
-    .home-list li span { font-weight: bold; }
+    .stats-wrap {
+      display:grid; gap:12px;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+    }
+    @media (max-width: 980px){ .stats-wrap { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+    @media (max-width: 520px){ .stats-wrap { grid-template-columns: 1fr; } }
+
+    .stat-card {
+      border:1px solid #e5e7eb; border-radius:14px; padding:16px 14px;
+      box-shadow: 0 1px 2px rgba(0,0,0,.04);
+      background:#fff;
+    }
+    .stat-title { font-size:.92rem; color:#556; margin-bottom:8px; }
+    .stat-value { font-size:1.8rem; font-weight:700; line-height:1.2; }
+    .muted { color:#6b7280; font-size:.86rem; margin-top:6px; }
   </style>
 
-  <div>
-    <h1>ようこそ、${sessionScope.userName} さん！</h1>
-    <p>ここは利用者ホーム画面です。</p>
-
-    <div class="home-section">
-      <h2>できること</h2>
-      <ul class="home-list">
-        <li><span>新規対局</span> : 新しい半荘を登録できます。</li>
-        <li><span>対局編集</span> : 過去に登録した対局を修正できます。</li>
-        <li><span>総合成績</span> : グループ全体の成績を確認できます。</li>
-      </ul>
+  <div class="stats-wrap">
+    <!-- 直近の対局日 -->
+    <div class="stat-card">
+      <div class="stat-title">直近の対局日</div>
+      <div class="stat-value">
+        <c:choose>
+          <c:when test="${not empty s.lastDate}">
+            <fmt:formatDate value="${s.lastDate}" pattern="yyyy/MM/dd" />
+          </c:when>
+          <c:otherwise>—</c:otherwise>
+        </c:choose>
+      </div>
+      <div class="muted">グループ内の最終対局日</div>
     </div>
 
-    <div class="home-section">
-      <h2>ご案内</h2>
-      <p>メニューから機能を選んで操作してください。<br>
-         各ページの内容は自動的に保存されるわけではありませんので、必ず「登録」ボタンで保存を行ってください。</p>
+    <!-- 合計点数 -->
+    <div class="stat-card">
+      <div class="stat-title">合計点数</div>
+      <div class="stat-value">
+        <fmt:formatNumber value="${s.totalPoint}" />
+      </div>
+      <div class="muted">あなたの累計ポイント</div>
     </div>
 
-    <div class="home-section">
-      <h2>今後のアップデート予定</h2>
-      <ul class="home-list">
-        <li>成績をグラフで表示する機能</li>
-        <li>月別・年別の集計表示</li>
-      </ul>
+    <!-- 合計金額 -->
+    <div class="stat-card">
+      <div class="stat-title">合計金額</div>
+      <div class="stat-value">
+        <fmt:formatNumber value="${s.totalAmount}" type="currency" currencySymbol="¥" />
+      </div>
+      <div class="muted">あなたの累計収支</div>
+    </div>
+
+    <!-- 平均順位 -->
+    <div class="stat-card">
+      <div class="stat-title">平均順位</div>
+      <div class="stat-value">
+        <c:choose>
+          <c:when test="${s.avgRank gt 0}">
+            <fmt:formatNumber value="${s.avgRank}" minFractionDigits="2" maxFractionDigits="2" />
+          </c:when>
+          <c:otherwise>—</c:otherwise>
+        </c:choose>
+      </div>
+      <div class="muted">その日までの順位合計 ÷ 対局数</div>
     </div>
   </div>
 </u:layout>

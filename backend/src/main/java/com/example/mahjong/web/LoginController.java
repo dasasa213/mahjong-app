@@ -45,9 +45,4 @@ public class LoginController {
         return "redirect:/main/login-in";
     }
 
-    @GetMapping("/user/home")
-    public String userHome(Model model) {
-        model.addAttribute("active", "user-home");
-        return "user/home";
-    }
 }
