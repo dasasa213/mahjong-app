@@ -31,6 +31,7 @@ public class LoginController {
             return "main/login-in";
         }
         var u = userOpt.get();
+        session.setMaxInactiveInterval(24 * 60 * 60);
         session.setAttribute("userId", u.id());
         session.setAttribute("userName", u.name());
         session.setAttribute("groupId", u.groupId());
