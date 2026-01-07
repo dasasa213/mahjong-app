@@ -11,7 +11,7 @@
     <div class="alert error">${error}</div>
   </c:if>
 
-  <!-- 上部フォーム（計算/登録は仮） -->
+  <!-- 上部フォーム（計算/登録） -->
   <form id="editForm" class="head-form" autocomplete="off" action="${pageContext.request.contextPath}/user/matches/save" method="post">
     <input type="hidden" name="id"
            value="${empty saveTablesRequest.gameId ? game.id : saveTablesRequest.gameId}"/>
@@ -58,7 +58,7 @@
         <label>ウマ</label>
         <div class="pair">
           <input type="number" name="uma1" value="<c:out value='${saveTablesRequest.header.uma1}'/>" />
-          <span class="pair-sep">／</span>>
+          <span class="pair-sep">／</span>
           <input type="number" name="uma2" value="<c:out value='${saveTablesRequest.header.uma2}'/>" />
         </div>
       </div>
