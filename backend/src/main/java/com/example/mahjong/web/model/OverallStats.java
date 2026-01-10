@@ -14,6 +14,7 @@ public class OverallStats {
     private long participateDays;   // 参加日数(件数)
     private long hanshanCount;      // 半荘数
     private BigDecimal hensa;       // 標準偏差
+    private BigDecimal hopeP;       // 1日の期待値
     private BigDecimal beforePoint; //前半点数
     private BigDecimal afterPoint;  //後半点数
 
@@ -44,4 +45,6 @@ public class OverallStats {
     public void setAfterPoint(BigDecimal afterPoint) { this.afterPoint = afterPoint; }
     public BigDecimal getBeforePoint() { return beforePoint; }
     public void setBeforePoint(BigDecimal beforePoint) { this.beforePoint = beforePoint; }
+    public BigDecimal getHopeP() { return hopeP; }
+    public void setHopeP(BigDecimal hopeP) { this.hopeP = hopeP; }
 }

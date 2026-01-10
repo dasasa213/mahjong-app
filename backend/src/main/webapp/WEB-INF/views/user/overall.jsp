@@ -63,6 +63,14 @@
         </tr>
 
         <tr>
+          <td class="metric-name">1日の期待値</td>
+          <c:forEach var="name" items="${userNames}">
+            <td>
+              <fmt:formatNumber value="${byUser[name].hopeP}" maxFractionDigits="2" minFractionDigits="2" />
+            </td>
+          </c:forEach>
+        </tr>
+        <tr>
           <td class="metric-name">標準偏差</td>
           <c:forEach var="name" items="${userNames}">
             <td>
