@@ -13,6 +13,9 @@ public class OverallStats {
     private BigDecimal rate4;       // 4位率(%)
     private long participateDays;   // 参加日数(件数)
     private long hanshanCount;      // 半荘数
+    private BigDecimal hensa;       // 標準偏差
+    private BigDecimal beforePoint; //前半点数
+    private BigDecimal afterPoint;  //後半点数
 
     // getter / setter
     public String getUserName() { return userName; }
@@ -35,4 +38,10 @@ public class OverallStats {
     public void setParticipateDays(long participateDays) { this.participateDays = participateDays; }
     public long getHanshanCount() { return hanshanCount; }
     public void setHanshanCount(long hanshanCount) { this.hanshanCount = hanshanCount; }
+    public BigDecimal getHensa() { return hensa; }
+    public void setHensa(BigDecimal hensa) { this.hensa = hensa; }
+    public BigDecimal getAfterPoint() { return afterPoint; }
+    public void setAfterPoint(BigDecimal afterPoint) { this.afterPoint = afterPoint; }
+    public BigDecimal getBeforePoint() { return beforePoint; }
+    public void setBeforePoint(BigDecimal beforePoint) { this.beforePoint = beforePoint; }
 }

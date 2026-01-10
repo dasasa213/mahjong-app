@@ -62,6 +62,15 @@
           </c:forEach>
         </tr>
 
+        <tr>
+          <td class="metric-name">標準偏差</td>
+          <c:forEach var="name" items="${userNames}">
+            <td>
+              <fmt:formatNumber value="${byUser[name].hensa}" maxFractionDigits="2" minFractionDigits="2" />
+            </td>
+          </c:forEach>
+        </tr>
+
         <!-- 1位率〜4位率 -->
         <tr>
           <td class="metric-name">1位率</td>

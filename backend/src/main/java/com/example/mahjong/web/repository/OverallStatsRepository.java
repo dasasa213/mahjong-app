@@ -84,4 +84,18 @@ public class OverallStatsRepository {
         o.setHanshanCount(rs.getLong("hanshan_count"));
         return o;
     }
+
+    public List<BigDecimal> findByname(String name) {
+        String sql = """
+                SELECT
+                        SUM(point) AS total_point
+                    FROM daa_point
+                    where name = ?
+                    GROUP BY
+                        name, game_id
+                    ;
+            """;
+
+        return jdbc.query(sql, (rs, rowNum) -> rs.getBigDecimal("total_point"), name);
+    }
 }
