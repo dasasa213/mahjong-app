@@ -41,7 +41,7 @@ public class OverallStatsService {
         hensaP = BigDecimal.valueOf(Math.sqrt(bunsan.doubleValue()));
 
         overallStats.setHensa(hensaP);
-        overallStats.setHensa(hopePoint);
+        overallStats.setHopeP(hopePoint);
 
 
         //前後半の取得
