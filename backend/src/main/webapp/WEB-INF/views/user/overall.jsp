@@ -71,6 +71,23 @@
           </c:forEach>
         </tr>
 
+        <tr>
+          <td class="metric-name">前半点数</td>
+          <c:forEach var="name" items="${userNames}">
+            <td>
+              <fmt:formatNumber value="${byUser[name].beforePoint}" />
+            </td>
+          </c:forEach>
+        </tr>
+        <tr>
+          <td class="metric-name">後半点数</td>
+          <c:forEach var="name" items="${userNames}">
+            <td>
+              <fmt:formatNumber value="${byUser[name].afterPoint}" />
+            </td>
+          </c:forEach>
+        </tr>
+
         <!-- 1位率〜4位率 -->
         <tr>
           <td class="metric-name">1位率</td>

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class OverallStatsService {
@@ -40,5 +41,11 @@ public class OverallStatsService {
         hensaP = BigDecimal.valueOf(Math.sqrt(bunsan.doubleValue()));
 
         overallStats.setHensa(hensaP);
+
+
+        //前後半の取得
+        Map<String, BigDecimal> halfP = repo.findHarfByname(overallStats.getUserName());
+        overallStats.setBeforePoint(halfP.getOrDefault("前半", BigDecimal.ZERO));
+        overallStats.setAfterPoint(halfP.getOrDefault("後半", BigDecimal.ZERO));
     }
 }

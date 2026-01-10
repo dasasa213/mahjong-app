@@ -7,7 +7,9 @@ import org.springframework.stereotype.Repository;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class OverallStatsRepository {
@@ -97,5 +99,45 @@ public class OverallStatsRepository {
             """;
 
         return jdbc.query(sql, (rs, rowNum) -> rs.getBigDecimal("total_point"), name);
+    }
+
+    public Map<String, BigDecimal> findHarfByname(String name) {
+        String sql = """
+                WITH split AS (
+                      SELECT
+                        name,
+                        CASE
+                          WHEN NTILE(2) OVER (PARTITION BY name, game_id ORDER BY row_no) = 1
+                          THEN '前半'
+                          ELSE '後半'
+                        END AS half,
+                        point
+                      FROM daa_point
+                      WHERE name = ?
+                    )
+                    SELECT
+                      name,
+                      half,
+                      SUM(point) AS total_point
+                    FROM split
+                    GROUP BY name, half
+                    ORDER BY
+                      CASE half WHEN '前半' THEN 1 ELSE 2 END;
+            """;
+
+        List<Map.Entry<String, BigDecimal>> rows = jdbc.query(
+                sql,
+                (rs, rowNum) -> Map.entry(
+                        rs.getString("half"),
+                        rs.getBigDecimal("total_point")
+                ),
+                name
+        );
+
+        Map<String, BigDecimal> result = new LinkedHashMap<>();
+        for (var e : rows) {
+            result.put(e.getKey(), e.getValue());
+        }
+        return result;
     }
 }
