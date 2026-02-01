@@ -69,5 +69,6 @@ public class AccountController {
             ra.addFlashAttribute("error", "登録に失敗しました。");
         }
         return "redirect:/account/register"; // 成功時も入力クリア
+        //TEST
     }
 }
