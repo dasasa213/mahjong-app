@@ -33,4 +33,5 @@ public class GameRecord {
     public void setUma2(Integer uma2) { this.uma2 = uma2; }
     public String getEditingFlag() { return editingFlag; }
     public void setEditingFlag(String editingFlag) { this.editingFlag = editingFlag; }
+    //TEST
 }
