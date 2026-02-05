@@ -24,7 +24,7 @@
 }
 
 /* 行追加で使うエラー強調 */
-.mt-row-error td { background:#fff1f2; }
+.mt-row-error td { background:#ef4444; }
 
 /* フッター（集計行）の配色  */
 .mt-table tfoot tr.summary { background:#fff7e6; }         /* 共通のハイライト */
