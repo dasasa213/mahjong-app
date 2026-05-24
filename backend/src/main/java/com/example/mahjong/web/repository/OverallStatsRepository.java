@@ -27,6 +27,7 @@ public class OverallStatsRepository {
                   COALESCE(p.total_point,   0)            AS total_point,
                   COALESCE(p.total_amount,  0)            AS total_amount,
                   COALESCE(r.avg_rank,      0)            AS avg_rank,
+                  COALESCE(r100.avg_rank,   0)            AS recent100_avg_rank,
                   COALESCE(r.rate1,         0)            AS rate1,
                   COALESCE(r.rate2,         0)            AS rate2,
                   COALESCE(r.rate3,         0)            AS rate3,
@@ -55,6 +56,23 @@ public class OverallStatsRepository {
                   GROUP BY r.name
                 ) r ON r.name = u.name
                 LEFT JOIN (
+                  SELECT name, AVG(rank_no) AS avg_rank
+                  FROM (
+                    SELECT
+                      r.name,
+                      r.rank_no,
+                      ROW_NUMBER() OVER (
+                        PARTITION BY r.name
+                        ORDER BY g.gamedate DESC, g.gameno DESC, r.row_no DESC, r.ranking_id DESC
+                      ) AS rn
+                    FROM daa_ranking r
+                    JOIN daa_gamerecords g ON g.id = r.game_id
+                    WHERE g.groupid = ?
+                  ) recent_rank
+                  WHERE rn <= 100
+                  GROUP BY name
+                ) r100 ON r100.name = u.name
+                LEFT JOIN (
                   SELECT gp.user_name, COUNT(*) AS play_count
                   FROM daa_gameplayers gp
                   GROUP BY gp.user_name
@@ -69,7 +87,7 @@ public class OverallStatsRepository {
                 ORDER BY u.id;
             """;
 
-        return jdbc.query(sql, (rs, rowNum) -> map(rs), groupId);
+        return jdbc.query(sql, (rs, rowNum) -> map(rs), groupId, groupId);
     }
 
     private OverallStats map(ResultSet rs) throws SQLException {
@@ -78,6 +96,7 @@ public class OverallStatsRepository {
         o.setTotalPoint(rs.getBigDecimal("total_point"));
         o.setTotalAmount(rs.getLong("total_amount"));
         o.setAvgRank(rs.getBigDecimal("avg_rank") == null ? BigDecimal.ZERO : rs.getBigDecimal("avg_rank"));
+        o.setRecent100AvgRank(rs.getBigDecimal("recent100_avg_rank") == null ? BigDecimal.ZERO : rs.getBigDecimal("recent100_avg_rank"));
         o.setRate1(rs.getBigDecimal("rate1") == null ? BigDecimal.ZERO : rs.getBigDecimal("rate1"));
         o.setRate2(rs.getBigDecimal("rate2") == null ? BigDecimal.ZERO : rs.getBigDecimal("rate2"));
         o.setRate3(rs.getBigDecimal("rate3") == null ? BigDecimal.ZERO : rs.getBigDecimal("rate3"));
