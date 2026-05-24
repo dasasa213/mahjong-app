@@ -62,6 +62,16 @@
           </c:forEach>
         </tr>
 
+        <!-- 直近100半荘の平均順位（小さいほど良いので色付けはしない） -->
+        <tr>
+          <td class="metric-name">直近100半荘平均順位</td>
+          <c:forEach var="name" items="${userNames}">
+            <td>
+              <fmt:formatNumber value="${byUser[name].recent100AvgRank}" maxFractionDigits="2" minFractionDigits="2" />
+            </td>
+          </c:forEach>
+        </tr>
+
         <tr>
           <td class="metric-name">1日の期待値</td>
           <c:forEach var="name" items="${userNames}">
