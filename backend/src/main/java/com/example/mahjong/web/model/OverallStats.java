@@ -7,6 +7,7 @@ public class OverallStats {
     private BigDecimal totalPoint;        // 合計点数
     private long totalAmount;       // 合計金額
     private BigDecimal avgRank;     // 平均順位(小数)
+    private BigDecimal recent100AvgRank; // 直近100半荘の平均順位(小数)
     private BigDecimal rate1;       // 1位率(%)
     private BigDecimal rate2;       // 2位率(%)
     private BigDecimal rate3;       // 3位率(%)
@@ -27,6 +28,8 @@ public class OverallStats {
     public void setTotalAmount(long totalAmount) { this.totalAmount = totalAmount; }
     public BigDecimal getAvgRank() { return avgRank; }
     public void setAvgRank(BigDecimal avgRank) { this.avgRank = avgRank; }
+    public BigDecimal getRecent100AvgRank() { return recent100AvgRank; }
+    public void setRecent100AvgRank(BigDecimal recent100AvgRank) { this.recent100AvgRank = recent100AvgRank; }
     public BigDecimal getRate1() { return rate1; }
     public void setRate1(BigDecimal rate1) { this.rate1 = rate1; }
     public BigDecimal getRate2() { return rate2; }
