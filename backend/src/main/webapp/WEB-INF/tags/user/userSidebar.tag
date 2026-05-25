@@ -24,6 +24,9 @@
     <li class="${active == 'overall' ? 'active' : ''}">
       <a href="<c:url value='/user/overall/chart'/>">総合成績（グラフ）</a>
     </li>
+    <li class="${active == 'pairwise-rank' ? 'active' : ''}">
+      <a href="<c:url value='/user/pairwise-rank'/>">対人別成績</a>
+    </li>
     <!-- 追加メニューはここに -->
   </ul>
 </nav>
