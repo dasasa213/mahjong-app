@@ -18,6 +18,11 @@ public class OverallStats {
     private BigDecimal hopeP;       // 1日の期待値
     private BigDecimal beforePoint; //前半点数
     private BigDecimal afterPoint;  //後半点数
+    private long handCount;              // 局数
+    private BigDecimal winRate;          // 和了率
+    private BigDecimal callRate;         // 副露率
+    private BigDecimal riichiRate;       // 立直率
+    private BigDecimal dealInRate;       // 放銃率
 
     // getter / setter
     public String getUserName() { return userName; }
@@ -50,4 +55,14 @@ public class OverallStats {
     public void setBeforePoint(BigDecimal beforePoint) { this.beforePoint = beforePoint; }
     public BigDecimal getHopeP() { return hopeP; }
     public void setHopeP(BigDecimal hopeP) { this.hopeP = hopeP; }
+    public long getHandCount() { return handCount; }
+    public void setHandCount(long handCount) { this.handCount = handCount; }
+    public BigDecimal getWinRate() { return winRate; }
+    public void setWinRate(BigDecimal winRate) { this.winRate = winRate; }
+    public BigDecimal getCallRate() { return callRate; }
+    public void setCallRate(BigDecimal callRate) { this.callRate = callRate; }
+    public BigDecimal getRiichiRate() { return riichiRate; }
+    public void setRiichiRate(BigDecimal riichiRate) { this.riichiRate = riichiRate; }
+    public BigDecimal getDealInRate() { return dealInRate; }
+    public void setDealInRate(BigDecimal dealInRate) { this.dealInRate = dealInRate; }
 }

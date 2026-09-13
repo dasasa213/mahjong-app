@@ -27,6 +27,9 @@
     <li class="${active == 'pairwise-rank' ? 'active' : ''}">
       <a href="<c:url value='/user/pairwise-rank'/>">対人別成績</a>
     </li>
+    <li class="${active == 'counter' ? 'active' : ''}">
+      <a href="<c:url value='/user/counter'/>">対局カウンター</a>
+    </li>
     <!-- 追加メニューはここに -->
   </ul>
 </nav>

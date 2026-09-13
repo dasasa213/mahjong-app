@@ -33,7 +33,12 @@ public class OverallStatsRepository {
                   COALESCE(r.rate3,         0)            AS rate3,
                   COALESCE(r.rate4,         0)            AS rate4,
                   COALESCE(gp.play_count,   0)            AS participate_days,
-                  COALESCE(pt.hanshan_cnt,  0)            AS hanshan_count
+                  COALESCE(pt.hanshan_cnt,  0)            AS hanshan_count,
+                  COALESCE(gc.hand_count,   0)            AS hand_count,
+                  COALESCE(gc.win_rate,     0)            AS win_rate,
+                  COALESCE(gc.call_rate,    0)            AS call_rate,
+                  COALESCE(gc.riichi_rate,  0)            AS riichi_rate,
+                  COALESCE(gc.deal_in_rate, 0)            AS deal_in_rate
                 FROM daa_user_knr u
                 LEFT JOIN (
                   SELECT
@@ -82,6 +87,16 @@ public class OverallStatsRepository {
                   FROM daa_point
                   GROUP BY name
                 ) pt ON pt.name = u.name
+                LEFT JOIN (
+                  SELECT
+                    user_id,
+                    SUM(hand_count) AS hand_count,
+                    100.0 * SUM(win_count) / NULLIF(SUM(hand_count), 0) AS win_rate,
+                    100.0 * SUM(call_count) / NULLIF(SUM(hand_count), 0) AS call_rate,
+                    100.0 * SUM(riichi_count) / NULLIF(SUM(hand_count), 0) AS riichi_rate,
+                    100.0 * SUM(deal_in_count) / NULLIF(SUM(hand_count), 0) AS deal_in_rate
+                  FROM daa_game_counter GROUP BY user_id
+                ) gc ON gc.user_id = u.id
                 WHERE u.groupid = ?
                   AND u.type = '2'
                 ORDER BY u.id;
@@ -103,6 +118,11 @@ public class OverallStatsRepository {
         o.setRate4(rs.getBigDecimal("rate4") == null ? BigDecimal.ZERO : rs.getBigDecimal("rate4"));
         o.setParticipateDays(rs.getLong("participate_days"));
         o.setHanshanCount(rs.getLong("hanshan_count"));
+        o.setHandCount(rs.getLong("hand_count"));
+        o.setWinRate(rs.getBigDecimal("win_rate") == null ? BigDecimal.ZERO : rs.getBigDecimal("win_rate"));
+        o.setCallRate(rs.getBigDecimal("call_rate") == null ? BigDecimal.ZERO : rs.getBigDecimal("call_rate"));
+        o.setRiichiRate(rs.getBigDecimal("riichi_rate") == null ? BigDecimal.ZERO : rs.getBigDecimal("riichi_rate"));
+        o.setDealInRate(rs.getBigDecimal("deal_in_rate") == null ? BigDecimal.ZERO : rs.getBigDecimal("deal_in_rate"));
         return o;
     }
 

@@ -155,6 +155,64 @@
             <td><fmt:formatNumber value="${byUser[name].hanshanCount}" pattern="#,##0" /></td>
           </c:forEach>
         </tr>
+        <tr>
+          <td class="metric-name">局数</td>
+          <c:forEach var="name" items="${userNames}">
+            <td>
+              <fmt:formatNumber
+                  value="${byUser[name].handCount}"
+                  pattern="#,##0" />
+            </td>
+          </c:forEach>
+        </tr>
+
+        <tr>
+          <td class="metric-name">和了率</td>
+          <c:forEach var="name" items="${userNames}">
+            <td>
+              <fmt:formatNumber
+                  value="${byUser[name].winRate}"
+                  maxFractionDigits="2"
+                  minFractionDigits="2" />%
+            </td>
+          </c:forEach>
+        </tr>
+
+        <tr>
+          <td class="metric-name">副露率</td>
+          <c:forEach var="name" items="${userNames}">
+            <td>
+              <fmt:formatNumber
+                  value="${byUser[name].callRate}"
+                  maxFractionDigits="2"
+                  minFractionDigits="2" />%
+            </td>
+          </c:forEach>
+        </tr>
+
+        <tr>
+          <td class="metric-name">立直率</td>
+          <c:forEach var="name" items="${userNames}">
+            <td>
+              <fmt:formatNumber
+                  value="${byUser[name].riichiRate}"
+                  maxFractionDigits="2"
+                  minFractionDigits="2" />%
+            </td>
+          </c:forEach>
+        </tr>
+
+        <tr>
+          <td class="metric-name">放銃率</td>
+          <c:forEach var="name" items="${userNames}">
+            <td>
+              <fmt:formatNumber
+                  value="${byUser[name].dealInRate}"
+                  maxFractionDigits="2"
+                  minFractionDigits="2" />%
+            </td>
+          </c:forEach>
+        </tr>
       </tbody>
     </table>
   </div>
