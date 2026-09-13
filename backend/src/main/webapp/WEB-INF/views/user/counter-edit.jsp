@@ -98,6 +98,56 @@
         align-items: flex-start;
       }
     }
+
+        .custom-modal {
+          display: none;
+          position: fixed;
+          z-index: 9999;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.45);
+          align-items: center;
+          justify-content: center;
+        }
+
+        .custom-modal-content {
+          width: 85%;
+          max-width: 420px;
+          background: #fff;
+          border-radius: 10px;
+          padding: 20px;
+          box-sizing: border-box;
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .custom-modal-title {
+          font-size: 18px;
+          font-weight: bold;
+          margin-bottom: 18px;
+        }
+
+        .custom-modal-text {
+          font-size: 16px;
+          line-height: 1.6;
+          margin-bottom: 24px;
+        }
+
+        .custom-modal-buttons {
+          display: flex;
+          justify-content: flex-end;
+        }
+
+        .custom-modal-buttons button {
+          padding: 8px 18px;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+          font-size: 15px;
+          background: #1976d2;
+          color: #fff;
+        }
   </style>
 
   <div class="counter-wrap">
@@ -262,9 +312,33 @@
     </form>
 
   </div>
+  <div id="messageModal" class="custom-modal">
 
+    <div class="custom-modal-content">
+
+      <div class="custom-modal-title">
+        入力内容を確認してください
+      </div>
+
+      <div id="messageModalText"
+           class="custom-modal-text">
+      </div>
+
+      <div class="custom-modal-buttons">
+
+        <button type="button"
+                onclick="closeMessageModal();">
+          OK
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
   <script>
     function changeValue(id, diff) {
+
       const input = document.getElementById(id);
 
       let value = parseInt(input.value || "0", 10);
@@ -277,6 +351,21 @@
 
       input.value = value;
     }
+
+
+    function showMessage(message) {
+
+      document.getElementById("messageModalText").textContent = message;
+
+      document.getElementById("messageModal").style.display = "flex";
+    }
+
+
+    function closeMessageModal() {
+
+      document.getElementById("messageModal").style.display = "none";
+    }
+
 
     function validateCounter() {
 
@@ -295,28 +384,40 @@
       const dealInCount =
           parseInt(document.getElementById("dealInCount").value || "0", 10);
 
+
       if (winCount > handCount) {
-        alert("和了数は局数以下にしてください。");
+
+        showMessage("和了数は局数以下にしてください。");
+
         return false;
       }
+
 
       if (callCount > handCount) {
-        alert("副露数は局数以下にしてください。");
+
+        showMessage("副露数は局数以下にしてください。");
+
         return false;
       }
+
 
       if (riichiCount > handCount) {
-        alert("立直数は局数以下にしてください。");
+
+        showMessage("立直数は局数以下にしてください。");
+
         return false;
       }
 
+
       if (dealInCount > handCount) {
-        alert("放銃数は局数以下にしてください。");
+
+        showMessage("放銃数は局数以下にしてください。");
+
         return false;
       }
+
 
       return true;
     }
   </script>
-
 </u:layout>

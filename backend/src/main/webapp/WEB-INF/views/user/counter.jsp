@@ -137,6 +137,65 @@
       border: none;
       border-radius: 4px;
     }
+
+        .custom-modal {
+          display: none;
+          position: fixed;
+          z-index: 9999;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.45);
+          align-items: center;
+          justify-content: center;
+        }
+
+        .custom-modal-content {
+          width: 85%;
+          max-width: 420px;
+          background: #fff;
+          border-radius: 10px;
+          padding: 20px;
+          box-sizing: border-box;
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .custom-modal-title {
+          font-size: 18px;
+          font-weight: bold;
+          margin-bottom: 18px;
+        }
+
+        .custom-modal-text {
+          font-size: 16px;
+          line-height: 1.6;
+          margin-bottom: 24px;
+        }
+
+        .custom-modal-buttons {
+          display: flex;
+          justify-content: flex-end;
+          gap: 10px;
+        }
+
+        .custom-modal-buttons button {
+          padding: 8px 18px;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+          font-size: 15px;
+        }
+
+        .modal-ok-button {
+          background: #1976d2;
+          color: #fff;
+        }
+
+        .modal-cancel-button {
+          background: #ddd;
+          color: #333;
+        }
   </style>
 
   <div class="counter-wrap">
@@ -336,7 +395,7 @@
               <form method="post"
                     action="${pageContext.request.contextPath}/user/counter/delete"
                     class="delete-form"
-                    onsubmit="return confirm('この履歴を削除してもよろしいですか？');">
+                    onsubmit="return showDeleteConfirm(this);">
 
                 <input type="hidden"
                        name="id"
@@ -357,60 +416,176 @@
     </table>
 
   </div>
+  <div id="messageModal" class="custom-modal">
+    <div class="custom-modal-content">
 
-  <script>
-    function changeValue(id, diff) {
-      const input = document.getElementById(id);
+      <div class="custom-modal-title">
+        入力内容を確認してください
+      </div>
 
-      let value = parseInt(input.value || "0", 10);
+      <div id="messageModalText"
+           class="custom-modal-text">
+      </div>
 
-      value += diff;
+      <div class="custom-modal-buttons">
+        <button type="button"
+                class="modal-ok-button"
+                onclick="closeMessageModal();">
+          OK
+        </button>
+      </div>
 
-      if (value < 0) {
-        value = 0;
+    </div>
+  </div>
+
+
+  <div id="deleteConfirmModal" class="custom-modal">
+    <div class="custom-modal-content">
+
+      <div class="custom-modal-title">
+        登録履歴の削除
+      </div>
+
+      <div class="custom-modal-text">
+        この履歴を削除してもよろしいですか？
+      </div>
+
+      <div class="custom-modal-buttons">
+
+        <button type="button"
+                class="modal-cancel-button"
+                onclick="closeDeleteConfirm();">
+          キャンセル
+        </button>
+
+        <button type="button"
+                class="modal-ok-button"
+                onclick="executeDelete();">
+          OK
+        </button>
+
+      </div>
+
+    </div>
+  </div>
+    <script>
+      let deleteForm = null;
+
+      function changeValue(id, diff) {
+
+        const input = document.getElementById(id);
+
+        let value = parseInt(input.value || "0", 10);
+
+        value += diff;
+
+        if (value < 0) {
+          value = 0;
+        }
+
+        input.value = value;
       }
 
-      input.value = value;
-    }
-    function validateCounter() {
 
-      const handCount =
-          parseInt(document.getElementById("handCount").value || "0", 10);
+      function showMessage(message) {
 
-      const winCount =
-          parseInt(document.getElementById("winCount").value || "0", 10);
+        document.getElementById("messageModalText").textContent = message;
 
-      const callCount =
-          parseInt(document.getElementById("callCount").value || "0", 10);
+        document.getElementById("messageModal").style.display = "flex";
+      }
 
-      const riichiCount =
-          parseInt(document.getElementById("riichiCount").value || "0", 10);
 
-      const dealInCount =
-          parseInt(document.getElementById("dealInCount").value || "0", 10);
+      function closeMessageModal() {
 
-      if (winCount > handCount) {
-        alert("和了数は局数以下にしてください。");
+        document.getElementById("messageModal").style.display = "none";
+      }
+
+
+      function showDeleteConfirm(form) {
+
+        deleteForm = form;
+
+        document.getElementById("deleteConfirmModal").style.display = "flex";
+
         return false;
       }
 
-      if (callCount > handCount) {
-        alert("副露数は局数以下にしてください。");
-        return false;
+
+      function closeDeleteConfirm() {
+
+        document.getElementById("deleteConfirmModal").style.display = "none";
+
+        deleteForm = null;
       }
 
-      if (riichiCount > handCount) {
-        alert("立直数は局数以下にしてください。");
-        return false;
+
+      function executeDelete() {
+
+        if (deleteForm === null) {
+          return;
+        }
+
+        const form = deleteForm;
+
+        deleteForm = null;
+
+        document.getElementById("deleteConfirmModal").style.display = "none";
+
+        form.submit();
       }
 
-      if (dealInCount > handCount) {
-        alert("放銃数は局数以下にしてください。");
-        return false;
+
+      function validateCounter() {
+
+        const handCount =
+            parseInt(document.getElementById("handCount").value || "0", 10);
+
+        const winCount =
+            parseInt(document.getElementById("winCount").value || "0", 10);
+
+        const callCount =
+            parseInt(document.getElementById("callCount").value || "0", 10);
+
+        const riichiCount =
+            parseInt(document.getElementById("riichiCount").value || "0", 10);
+
+        const dealInCount =
+            parseInt(document.getElementById("dealInCount").value || "0", 10);
+
+
+        if (winCount > handCount) {
+
+          showMessage("和了数は局数以下にしてください。");
+
+          return false;
+        }
+
+
+        if (callCount > handCount) {
+
+          showMessage("副露数は局数以下にしてください。");
+
+          return false;
+        }
+
+
+        if (riichiCount > handCount) {
+
+          showMessage("立直数は局数以下にしてください。");
+
+          return false;
+        }
+
+
+        if (dealInCount > handCount) {
+
+          showMessage("放銃数は局数以下にしてください。");
+
+          return false;
+        }
+
+
+        return true;
       }
-
-      return true;
-    }
-  </script>
-
+    </script>
 </u:layout>
