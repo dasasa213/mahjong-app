@@ -25,8 +25,8 @@
 
     @media(max-width:768px){
       .overall-card{border-radius:10px}
-      .overall-heading{padding:12px}
-      .swipe-hint{display:block}
+      .overall-heading{padding:12px;align-items:flex-start;flex-direction:column;gap:4px}
+      .swipe-hint{display:block;text-align:left}
       .overall-wrap{max-height:calc(100dvh - 140px)}
       .overall-table{min-width:max-content}
       .overall-table th,.overall-table td{min-width:124px;padding:10px 9px;font-size:14px}
