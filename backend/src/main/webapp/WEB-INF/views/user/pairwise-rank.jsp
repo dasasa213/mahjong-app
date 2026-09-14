@@ -73,8 +73,8 @@
     .pairwise-table td.neg{color:#1565c0;font-weight:700}
     @media(max-width:768px){
       .pairwise-card{border-radius:10px}
-      .pairwise-heading{padding:12px}
-      .swipe-hint{display:block;text-align:right}
+      .pairwise-heading{padding:12px;align-items:flex-start;flex-direction:column;gap:4px}
+      .swipe-hint{display:block;text-align:left}
       .pairwise-note{padding:10px 12px}
       .legend{display:grid;gap:5px}
       .pairwise-wrap{max-height:calc(100dvh - 250px)}
