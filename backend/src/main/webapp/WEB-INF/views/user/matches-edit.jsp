@@ -185,7 +185,7 @@
     }
     function validateAgree(){
       if(!document.getElementById('agreeChk').checked){
-        alert('削除には同意チェックが必要です。');
+        showAppMessage('削除には同意チェックが必要です。', '入力内容を確認してください');
         return false;
       }
       return true;
