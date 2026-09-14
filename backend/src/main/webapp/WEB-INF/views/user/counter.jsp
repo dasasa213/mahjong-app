@@ -5,197 +5,62 @@
 <u:layout title="対局カウンター" active="${active}">
 
   <style>
-    .counter-wrap {
-      max-width: 1100px;
+    .counter-wrap,.counter-history{width:100%;max-width:1100px;margin-inline:auto}
+    .counter-wrap{padding:16px;background:#fff;border:1px solid #dfe3e8;border-radius:12px}
+    .counter-date{display:inline-flex;margin-bottom:16px;padding:7px 11px;border-radius:8px;background:#eef6ef;color:#245c28;font-size:15px;font-weight:700}
+    .counter-list{display:grid;grid-template-columns:repeat(5,minmax(145px,1fr));gap:12px;align-items:stretch}
+    .counter-item{display:grid;grid-template-columns:44px 1fr 44px;grid-template-areas:"label label label" "minus value plus";gap:7px;padding:12px;border:1px solid #e2e8f0;border-radius:10px;background:#f8fafc}
+    .counter-label{grid-area:label;min-width:0;text-align:center;font-weight:700;color:#334155}
+    .counter-item .counter-btn:first-of-type{grid-area:minus}
+    .counter-item .counter-value{grid-area:value}
+    .counter-item .counter-btn:last-of-type{grid-area:plus}
+    .counter-value{width:100%;height:46px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;text-align:center;font-size:20px;font-weight:700;color:#111827}
+    .counter-btn{width:44px;height:46px;border:1px solid #94a3b8;border-radius:8px;background:#fff;color:#1f2937;font-size:24px;cursor:pointer;touch-action:manipulation}
+    .counter-btn:hover{background:#e8f5e9;border-color:#2e7d32}
+    .counter-btn:active{transform:translateY(1px)}
+    .counter-btn:focus-visible,.counter-submit:focus-visible,.edit-btn:focus-visible,.delete-btn:focus-visible{outline:3px solid rgba(37,99,235,.24);outline-offset:2px}
+    .counter-submit{display:block;width:min(360px,100%);min-height:48px;margin:18px auto 0;padding:10px 28px;border:0;border-radius:9px;background:#2e7d32;color:#fff;font-size:16px;font-weight:700;cursor:pointer}
+    .counter-submit:hover{filter:brightness(.94)}
+    .counter-error,.counter-success{margin-bottom:14px;padding:10px 12px;border-radius:8px;font-weight:600}
+    .counter-error{border:1px solid #ef9a9a;background:#ffebee;color:#b71c1c}
+    .counter-success{border:1px solid #81c784;background:#e8f5e9;color:#1b5e20}
+
+    .counter-history{margin-top:16px;background:#fff;border:1px solid #dfe3e8;border-radius:12px;overflow-x:auto;overscroll-behavior-inline:contain;-webkit-overflow-scrolling:touch}
+    .counter-history h3{position:sticky;left:0;width:max-content;min-width:100%;box-sizing:border-box;margin:0;padding:14px 16px;border-bottom:1px solid #e5e7eb;font-size:1.05rem}
+    .history-table{width:100%;min-width:760px;border-collapse:separate;border-spacing:0}
+    .history-table th,.history-table td{padding:10px 12px;border-right:1px solid #e5e7eb;border-bottom:1px solid #e5e7eb;text-align:center;white-space:nowrap}
+    .history-table th{background:#2e7d32;color:#fff}
+    .history-table tbody tr:nth-child(even) td{background:#f8fafc}
+    .history-actions{white-space:nowrap}
+    .delete-form{display:inline}
+    .edit-btn,.delete-btn{display:inline-flex;min-height:40px;align-items:center;justify-content:center;margin:0 3px;padding:7px 11px;border-radius:7px;cursor:pointer;text-decoration:none;font-weight:600}
+    .edit-btn{border:1px solid #93c5fd;background:#fff;color:#1d4ed8}
+    .delete-btn{border:1px solid #dc2626;background:#dc2626;color:#fff}
+
+    .custom-modal{display:none;position:fixed;z-index:9999;inset:0;padding:12px;background:rgba(15,23,42,.55);align-items:center;justify-content:center}
+    .custom-modal-content{width:min(420px,100%);max-height:calc(100dvh - 24px);overflow:auto;background:#fff;border-radius:12px;padding:20px;box-shadow:0 20px 48px rgba(15,23,42,.3)}
+    .custom-modal-title{margin-bottom:14px;font-size:18px;font-weight:700}
+    .custom-modal-text{margin-bottom:20px;font-size:16px;line-height:1.6}
+    .custom-modal-buttons{display:flex;justify-content:flex-end;gap:10px}
+    .custom-modal-buttons button{min-height:44px;padding:8px 18px;border:0;border-radius:8px;cursor:pointer;font-size:15px;font-weight:600}
+    .modal-ok-button{background:#1976d2;color:#fff}
+    .modal-cancel-button{background:#e5e7eb;color:#1f2937}
+
+    @media(max-width:1000px){
+      .counter-list{grid-template-columns:repeat(3,minmax(150px,1fr))}
     }
-
-    .counter-date {
-      margin-bottom: 24px;
-      font-size: 16px;
+    @media(max-width:768px){
+      .counter-wrap{padding:12px;border-radius:10px}
+      .counter-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+      .counter-item{grid-template-columns:44px minmax(48px,1fr) 44px;padding:10px 7px}
+      .counter-submit{position:sticky;bottom:74px;z-index:4;width:100%;box-shadow:0 4px 14px rgba(15,23,42,.16)}
+      .counter-history{border-radius:10px}
+      .history-table th,.history-table td{padding:9px 8px}
+      .edit-btn,.delete-btn{min-height:44px}
     }
-
-    .counter-list {
-      display: flex;
-      gap: 28px;
-      flex-wrap: wrap;
-      align-items: center;
+    @media(max-width:380px){
+      .counter-list{grid-template-columns:1fr}
     }
-
-    .counter-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .counter-label {
-      font-weight: 600;
-      min-width: 55px;
-    }
-
-    .counter-value {
-      width: 55px;
-      height: 38px;
-      border: 1px solid #bbb;
-      border-radius: 4px;
-      text-align: center;
-      font-size: 18px;
-      background: #fff;
-    }
-
-    .counter-btn {
-      width: 38px;
-      height: 38px;
-      border: 1px solid #aaa;
-      border-radius: 4px;
-      background: #fff;
-      font-size: 22px;
-      cursor: pointer;
-    }
-
-    .counter-btn:hover {
-      background: #f1f1f1;
-    }
-
-    .counter-submit {
-      margin-top: 28px;
-      padding: 10px 28px;
-      border: none;
-      border-radius: 5px;
-      background: #1976d2;
-      color: #fff;
-      font-size: 16px;
-      cursor: pointer;
-    }
-
-    @media (max-width: 640px) {
-      .counter-list {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-    }
-
-    .counter-error {
-      margin-bottom: 20px;
-      padding: 10px 14px;
-      border: 1px solid #e53935;
-      border-radius: 4px;
-      background: #ffebee;
-      color: #c62828;
-      font-weight: 600;
-    }
-
-    .counter-success {
-      margin-bottom: 20px;
-      padding: 10px 14px;
-      border: 1px solid #2e7d32;
-      border-radius: 4px;
-      background: #e8f5e9;
-      color: #2e7d32;
-      font-weight: 600;
-    }
-
-    .counter-history {
-      margin-top: 40px;
-    }
-
-    .history-table {
-      width: 100%;
-      max-width: 900px;
-      border-collapse: collapse;
-    }
-
-    .history-table th,
-    .history-table td {
-      border: 1px solid #ddd;
-      padding: 8px 12px;
-      text-align: center;
-    }
-
-    .history-table th {
-      background: #2e7d32;
-      color: white;
-    }
-
-    .history-actions {
-      white-space: nowrap;
-    }
-
-    .delete-form {
-      display: inline;
-    }
-
-    .edit-btn,
-    .delete-btn {
-      margin: 0 3px;
-      padding: 5px 10px;
-      cursor: pointer;
-    }
-
-    .delete-btn {
-      color: #fff;
-      background: #e53935;
-      border: none;
-      border-radius: 4px;
-    }
-
-        .custom-modal {
-          display: none;
-          position: fixed;
-          z-index: 9999;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background: rgba(0, 0, 0, 0.45);
-          align-items: center;
-          justify-content: center;
-        }
-
-        .custom-modal-content {
-          width: 85%;
-          max-width: 420px;
-          background: #fff;
-          border-radius: 10px;
-          padding: 20px;
-          box-sizing: border-box;
-          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        .custom-modal-title {
-          font-size: 18px;
-          font-weight: bold;
-          margin-bottom: 18px;
-        }
-
-        .custom-modal-text {
-          font-size: 16px;
-          line-height: 1.6;
-          margin-bottom: 24px;
-        }
-
-        .custom-modal-buttons {
-          display: flex;
-          justify-content: flex-end;
-          gap: 10px;
-        }
-
-        .custom-modal-buttons button {
-          padding: 8px 18px;
-          border: none;
-          border-radius: 4px;
-          cursor: pointer;
-          font-size: 15px;
-        }
-
-        .modal-ok-button {
-          background: #1976d2;
-          color: #fff;
-        }
-
-        .modal-cancel-button {
-          background: #ddd;
-          color: #333;
-        }
   </style>
 
   <div class="counter-wrap">
