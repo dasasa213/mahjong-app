@@ -2,9 +2,10 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="u" tagdir="/WEB-INF/tags/user" %>
 
-<u:layout title="新規対局：作成結果（仮）" active="newgame">
+<u:layout title="新規対局：作成完了" active="newgame">
   <div class="wrap">
-    <h2>作成しました</h2>
+    <div class="complete-mark" aria-hidden="true">✓</div>
+    <h2>対局を作成しました</h2>
     <div class="card">
       <p>対局日：${gamedate}</p>
       <p>対局番号：${gameno}</p>
@@ -30,12 +31,22 @@
   </div>
 
   <style>
-    .wrap{max-width:700px;margin:16px auto;padding:0 12px}
-    .card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px}
-    ul{margin:8px 0 0 18px}
-    .btn{padding:8px 12px;border:1px solid #d1d5db;border-radius:10px;background:#f9fafb;text-decoration:none}
-    .btn-primary{background:#2563eb;border-color:#2563eb;color:#fff}
-    .actions{display:flex;gap:8px;margin-top:12px}
-    .muted{color:#6b7280}
+    .wrap{max-width:700px;margin:0 auto;text-align:center}
+    .complete-mark{display:grid;width:52px;height:52px;place-items:center;margin:0 auto 10px;border-radius:50%;background:#2e7d32;color:#fff;font-size:28px;font-weight:700}
+    .wrap h2{margin:0 0 16px;font-size:1.25rem}
+    .card{padding:18px;background:#fff;border:1px solid #dfe3e8;border-radius:12px;text-align:left}
+    .card p{margin:7px 0}
+    .card h3{margin:16px 0 7px;font-size:1rem}
+    ul{margin:8px 0 0;padding-left:24px}
+    li{padding:3px 0}
+    .btn{display:inline-flex;min-height:46px;align-items:center;justify-content:center;padding:9px 18px;border:1px solid #cbd5e1;border-radius:9px;background:#fff;color:#334155;text-decoration:none;font-weight:700}
+    .btn-primary{background:#2e7d32;border-color:#2e7d32;color:#fff}
+    .actions{display:flex;justify-content:center;gap:10px;margin-top:14px}
+    .muted{color:#64748b}
+    @media(max-width:640px){
+      .card{padding:14px}
+      .actions{display:grid;grid-template-columns:1fr 1fr}
+      .actions .btn{width:100%}
+    }
   </style>
 </u:layout>
