@@ -59,22 +59,25 @@
   ]
 </c:set>
 
-<link rel="stylesheet" href="${pageContext.request.contextPath}/css/match-tables.css" />
-<script src="${pageContext.request.contextPath}/js/match-tables.js"></script>
-<script src="${pageContext.request.contextPath}/js/mt-submit.js"></script>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/match-tables.css?v=2" />
+<script src="${pageContext.request.contextPath}/js/match-tables.js?v=2"></script>
+<script src="${pageContext.request.contextPath}/js/mt-submit.js?v=2"></script>
 
 <!-- ★ container の id を JS と一致させる -->
 <div id="${pid}-container"
      class="mt-module"
      data-players='${playersJson}'>
   <div class="tabs">
-    <button class="tab active" data-tab="score">点棒</button>
-    <button class="tab"          data-tab="rank">順位</button>
-    <button class="tab"          data-tab="points">点数</button>
+    <div class="tab-list" role="tablist" aria-label="表示する成績">
+      <button type="button" class="tab active" data-tab="score">点棒</button>
+      <button type="button" class="tab" data-tab="rank">順位</button>
+      <button type="button" class="tab" data-tab="points">点数</button>
+    </div>
     <div class="tab-tools">
-      <button type="button" class="btn outline" id="${pid}-addrow">行を追加</button>
+      <button type="button" class="btn outline" id="${pid}-addrow">＋ 行を追加</button>
     </div>
   </div>
+  <p class="swipe-hint">横にスワイプして他の対局者を表示できます</p>
   <div class="tabpanes">
     <div id="${pid}-pane-score"  class="pane active"></div>
     <div id="${pid}-pane-rank"   class="pane"></div>

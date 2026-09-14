@@ -5,21 +5,21 @@
 
 <u:layout title="利用者ホーム" active="home">
   <style>
-    .stats-wrap {
-      display:grid; gap:12px;
-      grid-template-columns: repeat(4, minmax(0,1fr));
+    .stats-wrap{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+    .stat-card{min-width:0;padding:18px 16px;border:1px solid #dfe3e8;border-radius:12px;background:#fff;box-shadow:0 1px 2px rgba(15,23,42,.04)}
+    .stat-card::before{content:"";display:block;width:36px;height:4px;margin-bottom:12px;border-radius:4px;background:#2e7d32}
+    .stat-title{margin-bottom:7px;color:#475569;font-size:.9rem;font-weight:600}
+    .stat-value{overflow:hidden;color:#172554;font-size:clamp(1.35rem,2.4vw,1.9rem);font-weight:750;line-height:1.25;text-overflow:ellipsis;white-space:nowrap}
+    .muted{margin-top:7px;color:#64748b;font-size:.8rem;line-height:1.45}
+    @media(max-width:1050px){.stats-wrap{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:520px){
+      .stats-wrap{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+      .stat-card{padding:13px 11px;border-radius:10px}
+      .stat-card::before{margin-bottom:9px}
+      .stat-value{font-size:1.25rem}
+      .muted{font-size:.74rem}
     }
-    @media (max-width: 980px){ .stats-wrap { grid-template-columns: repeat(2, minmax(0,1fr)); } }
-    @media (max-width: 520px){ .stats-wrap { grid-template-columns: 1fr; } }
-
-    .stat-card {
-      border:1px solid #e5e7eb; border-radius:14px; padding:16px 14px;
-      box-shadow: 0 1px 2px rgba(0,0,0,.04);
-      background:#fff;
-    }
-    .stat-title { font-size:.92rem; color:#556; margin-bottom:8px; }
-    .stat-value { font-size:1.8rem; font-weight:700; line-height:1.2; }
-    .muted { color:#6b7280; font-size:.86rem; margin-top:6px; }
+    @media(max-width:350px){.stats-wrap{grid-template-columns:1fr}}
   </style>
 
   <div class="stats-wrap">

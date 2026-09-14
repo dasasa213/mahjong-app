@@ -4,7 +4,7 @@
 
 <t:layout title="アカウント登録" active="${active}">
   <!-- ページ専用CSS -->
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/accounts.css"/>
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/accounts.css?v=2"/>
 
   <section class="page-wrap">
 
