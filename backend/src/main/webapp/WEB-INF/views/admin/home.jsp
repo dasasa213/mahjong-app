@@ -63,9 +63,12 @@
       .group-info{align-items:flex-start;flex-direction:column}
       .group-info .sep{display:none}
       .group-info .created{margin-left:0}
-      .card{padding:10px 8px;overflow-x:auto}
-      .table{min-width:520px}
-      .table th,.table td{padding:10px 8px}
+      .card{padding:10px 8px;overflow:hidden}
+      .table{width:100%;min-width:0;table-layout:fixed;font-size:14px}
+      .members .col-id{width:92px}
+      .members .col-login{width:auto}
+      .members .col-type{width:68px}
+      .table th,.table td{padding:10px 6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
     }
   </style>
 </t:layout>
