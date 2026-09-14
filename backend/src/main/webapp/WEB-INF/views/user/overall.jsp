@@ -20,6 +20,11 @@
     .overall-table tbody tr:nth-child(even) .metric-name{background:#e9eef3}
     .overall-table tbody tr:hover td{background:#fffde7}
     .overall-table tbody tr:hover .metric-name{background:#f5f0ce}
+    .overall-table .counter-stat td{background:#f3f8f3}
+    .overall-table .counter-stat .metric-name{background:#e1eee2;color:#245c28}
+    .overall-table .counter-stat-start td{border-top:5px solid #81b985}
+    .overall-table tbody tr.counter-stat:hover td{background:#fffde7}
+    .overall-table tbody tr.counter-stat:hover .metric-name{background:#f5f0ce}
     .pos{color:#d32f2f;font-weight:700}
     .neg{color:#1565c0;font-weight:700}
 
@@ -92,40 +97,6 @@
           </c:forEach>
         </tr>
 
-        <tr>
-          <td class="metric-name">1日の期待値</td>
-          <c:forEach var="name" items="${userNames}">
-            <td>
-              <fmt:formatNumber value="${byUser[name].hopeP}" maxFractionDigits="2" minFractionDigits="2" />
-            </td>
-          </c:forEach>
-        </tr>
-        <tr>
-          <td class="metric-name">標準偏差</td>
-          <c:forEach var="name" items="${userNames}">
-            <td>
-              <fmt:formatNumber value="${byUser[name].hensa}" maxFractionDigits="2" minFractionDigits="2" />
-            </td>
-          </c:forEach>
-        </tr>
-
-        <tr>
-          <td class="metric-name">前半点数</td>
-          <c:forEach var="name" items="${userNames}">
-            <td>
-              <fmt:formatNumber value="${byUser[name].beforePoint}" />
-            </td>
-          </c:forEach>
-        </tr>
-        <tr>
-          <td class="metric-name">後半点数</td>
-          <c:forEach var="name" items="${userNames}">
-            <td>
-              <fmt:formatNumber value="${byUser[name].afterPoint}" />
-            </td>
-          </c:forEach>
-        </tr>
-
         <!-- 1位率〜4位率 -->
         <tr>
           <td class="metric-name">1位率</td>
@@ -175,7 +146,7 @@
             <td><fmt:formatNumber value="${byUser[name].hanshanCount}" pattern="#,##0" /></td>
           </c:forEach>
         </tr>
-        <tr>
+        <tr class="counter-stat counter-stat-start">
           <td class="metric-name">局数</td>
           <c:forEach var="name" items="${userNames}">
             <td>
@@ -186,7 +157,7 @@
           </c:forEach>
         </tr>
 
-        <tr>
+        <tr class="counter-stat">
           <td class="metric-name">和了率</td>
           <c:forEach var="name" items="${userNames}">
             <td>
@@ -198,7 +169,7 @@
           </c:forEach>
         </tr>
 
-        <tr>
+        <tr class="counter-stat">
           <td class="metric-name">副露率</td>
           <c:forEach var="name" items="${userNames}">
             <td>
@@ -210,7 +181,7 @@
           </c:forEach>
         </tr>
 
-        <tr>
+        <tr class="counter-stat">
           <td class="metric-name">立直率</td>
           <c:forEach var="name" items="${userNames}">
             <td>
@@ -222,7 +193,7 @@
           </c:forEach>
         </tr>
 
-        <tr>
+        <tr class="counter-stat">
           <td class="metric-name">放銃率</td>
           <c:forEach var="name" items="${userNames}">
             <td>
