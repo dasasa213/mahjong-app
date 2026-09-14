@@ -33,7 +33,7 @@ public class OverallChartController {
 
         model.addAttribute("defaultUserName", loginUserName);
         model.addAttribute("defaultMetric", "point");
-        model.addAttribute("active", "overall"); // レイアウトのアクティブ表示用
+        model.addAttribute("active", "overall-chart"); // サイドメニューの選択状態
         return "user/overall-chart";
     }
 
