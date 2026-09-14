@@ -43,32 +43,29 @@
   </section>
 
   <style>
-    /* レイアウト共通の余白がある前提。左に寄せて読みやすく */
-    .group-info{
-      margin:8px 0 16px;
-      font-size:14px;
-      color:#374151;
+    .group-info{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:0 0 14px;padding:12px 14px;border:1px solid #c8e6c9;border-radius:10px;background:#f1f8f2;color:#334155;font-size:14px}
+    .group-info .label{color:#64748b}
+    .group-info .sep{margin:0 2px;color:#94a3b8}
+    .group-info .created{margin-left:auto;color:#64748b}
+    .card{padding:16px;border:1px solid #dfe3e8;border-radius:12px;background:#fff}
+    .card.narrow{width:760px;max-width:100%}
+    .section-title{margin:0 0 12px;font-size:1.05rem}
+    .table{width:100%;border-collapse:separate;border-spacing:0;table-layout:fixed}
+    .table th,.table td{padding:11px 12px;border-bottom:1px solid #e5e7eb;text-align:left}
+    .table thead th{background:#e8f5e9;color:#1f4322;font-weight:700}
+    .members .col-id{width:120px}
+    .members .col-login{width:auto}
+    .members .col-type{width:120px}
+    .table tbody tr:nth-child(even) td{background:#f8fafc}
+    .table tbody tr:hover td{background:#fffde7}
+    .empty{text-align:center;color:#64748b}
+    @media(max-width:640px){
+      .group-info{align-items:flex-start;flex-direction:column}
+      .group-info .sep{display:none}
+      .group-info .created{margin-left:0}
+      .card{padding:10px 8px;overflow-x:auto}
+      .table{min-width:520px}
+      .table th,.table td{padding:10px 8px}
     }
-    .group-info .label{ color:#6b7280; margin-right:4px; }
-    .group-info .sep{ margin:0 6px; color:#9ca3af; }
-    .group-info .created{ margin-left:10px; color:#6b7280; }
-
-    .card{ background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:16px; }
-    /* 表の横幅を「いい感じ」に制限して左寄せ */
-    .card.narrow{ width:720px; max-width:100%; }
-
-    .section-title{ margin:0 0 10px; font-size:16px; }
-
-    .table{ width:100%; border-collapse:collapse; table-layout:fixed; }
-    .table th,.table td{ border-top:1px solid #eee; padding:10px 12px; text-align:left; }
-    .table thead th{ background:#f8fafc; border-top:none; font-weight:600; }
-
-    /* 列幅を固定して揃える */
-    .members .col-id{ width:110px; }
-    .members .col-login{ width:auto; }   /* 残り全部 */
-    .members .col-type{ width:120px; }
-
-    .table tbody tr:hover{ background:#f9fafb; }
-    .empty{ text-align:center; color:#6b7280; }
   </style>
 </t:layout>
