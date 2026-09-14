@@ -101,7 +101,7 @@
           if(chart) chart.destroy();
           chart = new Chart(ctx, cfg);
         } catch(error) {
-          alert(error.message);
+          showAppMessage(error.message, 'グラフ表示エラー');
         } finally {
           $btn.disabled = false;
           $btn.textContent = '更新';
