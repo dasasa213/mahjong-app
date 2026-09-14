@@ -382,17 +382,12 @@
 
   // ============ prefill helper ============
   function applyPrefill(app, opts) {
-    console.log('[applyPrefill] start =', opts.prefill);
-
     const prefill = opts.prefill || {};
     const norm = s => String(s ?? '').trim();
 
     // players 並び → 列index（0-based）
     const nameToCol = new Map();
     app.players.forEach((nm, idx) => nameToCol.set(norm(nm), idx));
-    console.log('tables:', !!app.scoreTable, !!app.rankTable, !!app.pointsTable);
-    console.log('players map:', Array.from(nameToCol.entries()));
-
     // 行が足りなければ増やす（addOneRow は3テーブル同時に増える）
     const ensureRows = (table, needRows) => {
       const cur = table.tBodies[0].rows.length;
@@ -409,8 +404,6 @@
       items.forEach(it => {
         const row1 = Number(it.row);
         const col  = nameToCol.get(norm(it.name));
-        console.log('fill', label, { row: row1, name: it.name, col, value: it.value });
-
         if (!row1 || col == null) return;
 
         const tr = table.tBodies[0].querySelector(`tr[data-row="${row1}"]`);
