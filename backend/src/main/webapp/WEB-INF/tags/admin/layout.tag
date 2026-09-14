@@ -7,18 +7,24 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>${empty title ? "管理画面" : title}</title>
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/sidebar.css?v=3" />
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/header.css?v=1" />
-  <script defer src="${pageContext.request.contextPath}/js/sidebar.js"></script>
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/sidebar.css?v=4" />
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/header.css?v=2" />
+  <script defer src="${pageContext.request.contextPath}/js/sidebar.js?v=2"></script>
 </head>
 <body>
-  <!-- 左サイドバー（admin 用） -->
   <a:sidebar active="${active}" />
 
-  <!-- 右コンテンツ -->
+  <button type="button"
+          class="mobile-menu-toggle"
+          id="mobile-menu-toggle"
+          aria-label="メニューを開く"
+          aria-controls="sidebar"
+          aria-expanded="false">☰</button>
+  <div class="sidebar-backdrop" id="sidebar-backdrop" aria-hidden="true"></div>
+
   <main class="content">
-    <!-- 共通ヘッダ -->
     <a:header title="${empty title ? '画面タイトル' : title}" />
 
     <section class="page-body">
