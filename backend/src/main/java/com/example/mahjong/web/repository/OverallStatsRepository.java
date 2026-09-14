@@ -7,7 +7,9 @@ import org.springframework.stereotype.Repository;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class OverallStatsRepository {
@@ -25,12 +27,18 @@ public class OverallStatsRepository {
                   COALESCE(p.total_point,   0)            AS total_point,
                   COALESCE(p.total_amount,  0)            AS total_amount,
                   COALESCE(r.avg_rank,      0)            AS avg_rank,
+                  COALESCE(r100.avg_rank,   0)            AS recent100_avg_rank,
                   COALESCE(r.rate1,         0)            AS rate1,
                   COALESCE(r.rate2,         0)            AS rate2,
                   COALESCE(r.rate3,         0)            AS rate3,
                   COALESCE(r.rate4,         0)            AS rate4,
                   COALESCE(gp.play_count,   0)            AS participate_days,
-                  COALESCE(pt.hanshan_cnt,  0)            AS hanshan_count
+                  COALESCE(pt.hanshan_cnt,  0)            AS hanshan_count,
+                  COALESCE(gc.hand_count,   0)            AS hand_count,
+                  COALESCE(gc.win_rate,     0)            AS win_rate,
+                  COALESCE(gc.call_rate,    0)            AS call_rate,
+                  COALESCE(gc.riichi_rate,  0)            AS riichi_rate,
+                  COALESCE(gc.deal_in_rate, 0)            AS deal_in_rate
                 FROM daa_user_knr u
                 LEFT JOIN (
                   SELECT
@@ -53,6 +61,23 @@ public class OverallStatsRepository {
                   GROUP BY r.name
                 ) r ON r.name = u.name
                 LEFT JOIN (
+                  SELECT name, AVG(rank_no) AS avg_rank
+                  FROM (
+                    SELECT
+                      r.name,
+                      r.rank_no,
+                      ROW_NUMBER() OVER (
+                        PARTITION BY r.name
+                        ORDER BY g.gamedate DESC, g.gameno DESC, r.row_no DESC, r.ranking_id DESC
+                      ) AS rn
+                    FROM daa_ranking r
+                    JOIN daa_gamerecords g ON g.id = r.game_id
+                    WHERE g.groupid = ?
+                  ) recent_rank
+                  WHERE rn <= 100
+                  GROUP BY name
+                ) r100 ON r100.name = u.name
+                LEFT JOIN (
                   SELECT gp.user_name, COUNT(*) AS play_count
                   FROM daa_gameplayers gp
                   GROUP BY gp.user_name
@@ -62,26 +87,96 @@ public class OverallStatsRepository {
                   FROM daa_point
                   GROUP BY name
                 ) pt ON pt.name = u.name
+                LEFT JOIN (
+                  SELECT
+                    user_id,
+                    SUM(hand_count) AS hand_count,
+                    100.0 * SUM(win_count) / NULLIF(SUM(hand_count), 0) AS win_rate,
+                    100.0 * SUM(call_count) / NULLIF(SUM(hand_count), 0) AS call_rate,
+                    100.0 * SUM(riichi_count) / NULLIF(SUM(hand_count), 0) AS riichi_rate,
+                    100.0 * SUM(deal_in_count) / NULLIF(SUM(hand_count), 0) AS deal_in_rate
+                  FROM daa_game_counter GROUP BY user_id
+                ) gc ON gc.user_id = u.id
                 WHERE u.groupid = ?
                   AND u.type = '2'
                 ORDER BY u.id;
             """;
 
-        return jdbc.query(sql, (rs, rowNum) -> map(rs), groupId);
+        return jdbc.query(sql, (rs, rowNum) -> map(rs), groupId, groupId);
     }
 
     private OverallStats map(ResultSet rs) throws SQLException {
         OverallStats o = new OverallStats();
         o.setUserName(rs.getString("user_name"));
-        o.setTotalPoint(rs.getLong("total_point"));
+        o.setTotalPoint(rs.getBigDecimal("total_point"));
         o.setTotalAmount(rs.getLong("total_amount"));
         o.setAvgRank(rs.getBigDecimal("avg_rank") == null ? BigDecimal.ZERO : rs.getBigDecimal("avg_rank"));
+        o.setRecent100AvgRank(rs.getBigDecimal("recent100_avg_rank") == null ? BigDecimal.ZERO : rs.getBigDecimal("recent100_avg_rank"));
         o.setRate1(rs.getBigDecimal("rate1") == null ? BigDecimal.ZERO : rs.getBigDecimal("rate1"));
         o.setRate2(rs.getBigDecimal("rate2") == null ? BigDecimal.ZERO : rs.getBigDecimal("rate2"));
         o.setRate3(rs.getBigDecimal("rate3") == null ? BigDecimal.ZERO : rs.getBigDecimal("rate3"));
         o.setRate4(rs.getBigDecimal("rate4") == null ? BigDecimal.ZERO : rs.getBigDecimal("rate4"));
         o.setParticipateDays(rs.getLong("participate_days"));
         o.setHanshanCount(rs.getLong("hanshan_count"));
+        o.setHandCount(rs.getLong("hand_count"));
+        o.setWinRate(rs.getBigDecimal("win_rate") == null ? BigDecimal.ZERO : rs.getBigDecimal("win_rate"));
+        o.setCallRate(rs.getBigDecimal("call_rate") == null ? BigDecimal.ZERO : rs.getBigDecimal("call_rate"));
+        o.setRiichiRate(rs.getBigDecimal("riichi_rate") == null ? BigDecimal.ZERO : rs.getBigDecimal("riichi_rate"));
+        o.setDealInRate(rs.getBigDecimal("deal_in_rate") == null ? BigDecimal.ZERO : rs.getBigDecimal("deal_in_rate"));
         return o;
+    }
+
+    public List<BigDecimal> findByname(String name) {
+        String sql = """
+                SELECT
+                        SUM(point) AS total_point
+                    FROM daa_point
+                    where name = ?
+                    GROUP BY
+                        name, game_id
+                    ;
+            """;
+
+        return jdbc.query(sql, (rs, rowNum) -> rs.getBigDecimal("total_point"), name);
+    }
+
+    public Map<String, BigDecimal> findHarfByname(String name) {
+        String sql = """
+                WITH split AS (
+                      SELECT
+                        name,
+                        CASE
+                          WHEN NTILE(2) OVER (PARTITION BY name, game_id ORDER BY row_no) = 1
+                          THEN '前半'
+                          ELSE '後半'
+                        END AS half,
+                        point
+                      FROM daa_point
+                      WHERE name = ?
+                    )
+                    SELECT
+                      name,
+                      half,
+                      SUM(point) AS total_point
+                    FROM split
+                    GROUP BY name, half
+                    ORDER BY
+                      CASE half WHEN '前半' THEN 1 ELSE 2 END;
+            """;
+
+        List<Map.Entry<String, BigDecimal>> rows = jdbc.query(
+                sql,
+                (rs, rowNum) -> Map.entry(
+                        rs.getString("half"),
+                        rs.getBigDecimal("total_point")
+                ),
+                name
+        );
+
+        Map<String, BigDecimal> result = new LinkedHashMap<>();
+        for (var e : rows) {
+            result.put(e.getKey(), e.getValue());
+        }
+        return result;
     }
 }

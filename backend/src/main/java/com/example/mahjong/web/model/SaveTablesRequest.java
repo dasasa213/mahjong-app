@@ -3,6 +3,7 @@ package com.example.mahjong.web.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +34,6 @@ public class SaveTablesRequest {
     public static class Row {
         public Integer row_num;
         public String name;
-        public Integer value;
+        public BigDecimal value;
     }
 }

@@ -55,13 +55,13 @@ public class SaveTablesRepository {
             SELECT row_no, name, score
               FROM daa_score
              WHERE game_id = ?
-             ORDER BY row_no 
+             ORDER BY row_no
         """;
         return jdbc.query(sql, (rs, i) -> {
             var row = new SaveTablesRequest.Row();
             row.row_num = rs.getInt("row_no");
             row.name = rs.getString("name");
-            row.value = rs.getInt("score");
+            row.value = rs.getBigDecimal("score");
             return row;
         }, game_id);
     }
@@ -71,13 +71,13 @@ public class SaveTablesRepository {
             SELECT row_no, name, rank_no
               FROM daa_ranking
              WHERE game_id = ?
-             ORDER BY row_no 
+             ORDER BY row_no
         """;
         return jdbc.query(sql, (rs, i) -> {
             var row = new SaveTablesRequest.Row();
             row.row_num = rs.getInt("row_no");
             row.name = rs.getString("name");
-            row.value = rs.getInt("rank_no");
+            row.value = rs.getBigDecimal("rank_no");
             return row;
         }, game_id);
     }
@@ -87,13 +87,13 @@ public class SaveTablesRepository {
             SELECT row_no, name, point
               FROM daa_point
              WHERE game_id = ?
-             ORDER BY row_no 
+             ORDER BY row_no
         """;
         return jdbc.query(sql, (rs, i) -> {
             var row = new SaveTablesRequest.Row();
             row.row_num = rs.getInt("row_no");
             row.name = rs.getString("name");
-            row.value = rs.getInt("point");
+            row.value = rs.getBigDecimal("point");
             return row;
         }, game_id);
     }

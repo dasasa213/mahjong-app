@@ -5,113 +5,139 @@
 <u:layout title="対局編集" active="${active}">
 
   <c:if test="${not empty success}">
-    <div class="alert success">${success}</div>
+    <div class="alert success" role="status">${success}</div>
   </c:if>
   <c:if test="${not empty error}">
-    <div class="alert error">${error}</div>
+    <div class="alert error" role="alert">${error}</div>
   </c:if>
 
-  <!-- 上部フォーム（計算/登録は仮） -->
-  <form id="editForm" class="head-form" autocomplete="off" action="${pageContext.request.contextPath}/user/matches/save" method="post">
+  <form id="editForm" class="match-form" autocomplete="off"
+        action="${pageContext.request.contextPath}/user/matches/save" method="post">
     <input type="hidden" name="id"
            value="${empty saveTablesRequest.gameId ? game.id : saveTablesRequest.gameId}"/>
     <input type="hidden" id="savePayload" name="payload"/>
 
-    <!-- 日付 -->
-    <div class="field full">
-      <label>対局日</label>
-      <input type="date" name="gamedate" value="<c:out value='${saveTablesRequest.header.gamedate}'/>" readonly />
-    </div>
+    <section class="settings-card" aria-labelledby="settings-title">
+      <h2 id="settings-title" class="section-title">対局設定</h2>
 
-    <!-- 回数 -->
-    <div class="field full">
-      <label>回</label>
-      <input type="number" name="gameno" value="<c:out value='${saveTablesRequest.header.gameno}'/>" readonly />
-    </div>
+      <div class="settings-grid">
+        <div class="field">
+          <label for="gamedate">対局日</label>
+          <input id="gamedate" type="date" name="gamedate"
+                 value="<c:out value='${saveTablesRequest.header.gamedate}'/>" readonly />
+        </div>
 
-    <!-- レート -->
-    <div class="row">
-      <div class="field">
-        <label>レート</label>
-        <div class="input-with-suffix">
-        <input type="number" name="rate" value="<c:out value='${saveTablesRequest.header.rate}'/>" />
-        <span class="suffix">ペソ</span>
+        <div class="field">
+          <label for="gameno">回</label>
+          <input id="gameno" type="number" name="gameno"
+                 value="<c:out value='${saveTablesRequest.header.gameno}'/>" readonly />
+        </div>
+
+        <div class="field">
+          <label for="rate">レート</label>
+          <div class="input-with-suffix">
+            <input id="rate" type="number" name="rate"
+                   value="<c:out value='${saveTablesRequest.header.rate}'/>" />
+            <span class="suffix">ペソ</span>
+          </div>
+        </div>
+
+        <div class="field field-pair">
+          <label>配点／返し点</label>
+          <div class="pair">
+            <input type="number" name="points" aria-label="配点"
+                   value="<c:out value='${saveTablesRequest.header.points}'/>" />
+            <span class="pair-sep" aria-hidden="true">／</span>
+            <input type="number" name="returnpoints" aria-label="返し点"
+                   value="<c:out value='${saveTablesRequest.header.returnpoints}'/>" />
+          </div>
+        </div>
+
+        <div class="field field-pair">
+          <label>ウマ</label>
+          <div class="pair">
+            <input type="number" name="uma1" aria-label="ウマ1"
+                   value="<c:out value='${saveTablesRequest.header.uma1}'/>" />
+            <span class="pair-sep" aria-hidden="true">／</span>
+            <input type="number" name="uma2" aria-label="ウマ2"
+                   value="<c:out value='${saveTablesRequest.header.uma2}'/>" />
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- 配点 / 返し点 -->
-    <div class="row">
-      <div class="field">
-        <label>配点 / 返し点</label>
-        <div class="pair">
-          <input type="number" name="points" value="<c:out value='${saveTablesRequest.header.points}'/>" />
-          <span class="pair-sep">／</span>
-          <input type="number" name="returnpoints" value="<c:out value='${saveTablesRequest.header.returnpoints}'/>" />
-        </div>
+      <div class="form-actions" aria-label="対局操作">
+        <button id="calcBtn" type="button" class="action-btn calc">計算</button>
+        <button id="saveBtn" type="button" class="action-btn save">登録</button>
       </div>
-    </div>
-
-    <!-- ウマ1, ウマ2 -->
-    <div class="row">
-      <div class="field">
-        <label>ウマ</label>
-        <div class="pair">
-          <input type="number" name="uma1" value="<c:out value='${saveTablesRequest.header.uma1}'/>" />
-          <span class="pair-sep">／</span>>
-          <input type="number" name="uma2" value="<c:out value='${saveTablesRequest.header.uma2}'/>" />
-        </div>
-      </div>
-    </div>
-
-    <div class="actions">
-      <button id="calcBtn" type="button" class="btn primary">計算</button>
-      <button id="saveBtn" type="button" class="btn success">登録</button>
-    </div>
+    </section>
   </form>
 
-  <u:matchTables
-      players="${players}"
-      initialRows="4"
-      calcBtnId="calcBtn"
-      saveBtnId="saveBtn"
-      idPrefix="mt"
-      saveTablesRequest="${saveTablesRequest}" />
+  <section class="tables-section" aria-label="対局結果入力">
+    <u:matchTables
+        players="${players}"
+        initialRows="4"
+        calcBtnId="calcBtn"
+        saveBtnId="saveBtn"
+        idPrefix="mt"
+        saveTablesRequest="${saveTablesRequest}" />
+  </section>
 
-  <!-- ▼ この下に後続で「タブ + 点棒/順位/点数テーブル」を追加していく予定 -->
   <div id="tablesArea" class="mt"></div>
 
   <style>
-    .alert{padding:8px 10px;border-radius:6px;margin:8px 0}
-    .alert.success{background:#e8f5e9;color:#2e7d32}
+    .alert{padding:10px 12px;border-radius:8px;margin:0 0 12px}
+    .alert.success{background:#e8f5e9;color:#1b5e20}
     .alert.error{background:#fdecea;color:#b71c1c}
 
-    .head-form{max-width:860px;margin:10px auto 0;display:flex;flex-direction:column;gap:14px}
-    .row{display:flex;gap:14px;flex-wrap:wrap}
-    .field{flex:1;min-width:240px}
-    .field.full{width:100%}
-    .field label{display:block;font-size:.95rem;color:#555;margin:0 0 6px 2px}
-    .head-form input[type="date"],
-    .head-form input[type="number"]{
-      width:100%;padding:12px 14px;border:1px solid #cfd8dc;border-radius:10px;
-      font-size:1.1rem;box-sizing:border-box;background:#fff
+    .match-form,.tables-section{width:100%;max-width:1100px;margin:0 auto}
+    .settings-card{padding:18px;background:#fff;border:1px solid #dfe3e8;border-radius:12px}
+    .section-title{margin:0 0 14px;font-size:1.05rem;color:#263238}
+    .settings-grid{display:grid;grid-template-columns:1.35fr .65fr 1fr 2fr 1.5fr;gap:14px;align-items:end}
+    .field{min-width:0}
+    .field label{display:block;margin:0 0 6px 2px;color:#4b5563;font-size:.9rem;font-weight:600}
+    .match-form input[type="date"],.match-form input[type="number"]{
+      width:100%;height:44px;padding:9px 12px;border:1px solid #cbd5e1;border-radius:8px;
+      background:#fff;color:#111827;font-size:1rem
     }
+    .match-form input[readonly]{background:#f3f4f6;color:#4b5563}
+    .match-form input:focus{outline:3px solid rgba(37,99,235,.18);border-color:#2563eb}
     .input-with-suffix{position:relative}
-    .input-with-suffix .suffix{
-      position:absolute;right:10px;top:50%;transform:translateY(-50%);color:#777;font-size:.95rem
-    }
-    .pair{display:flex;align-items:center;gap:10px}
-    .pair input{max-width:220px}
-    .pair-sep{color:#666}
+    .input-with-suffix input{padding-right:44px!important}
+    .input-with-suffix .suffix{position:absolute;right:11px;top:50%;transform:translateY(-50%);color:#6b7280;font-size:.82rem}
+    .pair{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:7px}
+    .pair-sep{color:#6b7280}
 
-    .actions{display:flex;flex-direction:column;gap:12px;margin-top:6px}
-    .btn{width:100%;padding:12px;border-radius:10px;border:1px solid transparent;
-         font-size:1.05rem;cursor:pointer}
-    .btn.primary{background:#1976d2;color:#fff}
-    .btn.success{background:#2e7d32;color:#fff}
-    .btn:disabled{opacity:.6;cursor:not-allowed}
+    .form-actions{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}
+    .action-btn{min-height:48px;padding:11px 16px;border:1px solid transparent;border-radius:9px;color:#fff;font-weight:700;cursor:pointer}
+    .action-btn.calc{background:#1976d2}
+    .action-btn.save{background:#2e7d32}
+    .action-btn:hover{filter:brightness(.94)}
+    .action-btn:focus-visible{outline:3px solid rgba(37,99,235,.28);outline-offset:2px}
+    .action-btn:disabled{opacity:.6;cursor:not-allowed}
 
+    .tables-section{margin-top:16px}
     .mt{margin-top:24px}
+
+    @media(max-width:1050px){
+      .settings-grid{grid-template-columns:1fr 1fr 1fr}
+      .field-pair{grid-column:span 2}
+    }
+
+    @media(max-width:768px){
+      .settings-card{padding:12px;border-radius:10px}
+      .section-title{margin-bottom:10px}
+      .settings-grid{grid-template-columns:minmax(0,1.5fr) minmax(88px,.5fr);gap:10px}
+      .field:nth-child(3),.field-pair{grid-column:1/-1}
+      .match-form input[type="date"],.match-form input[type="number"]{height:46px;font-size:16px}
+      .form-actions{
+        position:fixed;left:0;right:0;bottom:0;z-index:24;
+        grid-template-columns:1fr 1fr;gap:10px;margin:0;padding:10px 12px;
+        background:rgba(255,255,255,.97);border-top:1px solid #dfe3e8;
+        box-shadow:0 -4px 16px rgba(15,23,42,.12)
+      }
+      .action-btn{min-height:48px}
+      .tables-section{margin-top:12px}
+    }
   </style>
 
 </u:layout>

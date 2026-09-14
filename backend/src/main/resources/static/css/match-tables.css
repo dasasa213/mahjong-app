@@ -1,38 +1,232 @@
 /* ===== Match Tables ===== */
-.mt-module { border:1px solid #e5e7eb; border-radius:10px; padding:12px; background:#fff; }
+.mt-module {
+  width: 100%;
+  border: 1px solid #dfe3e8;
+  border-radius: 12px;
+  padding: 14px;
+  background: #fff;
+}
 
-.mt-module .tabs { display:flex; align-items:center; gap:8px; margin-bottom:10px; }
+.mt-module .tabs {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.mt-module .tab-list {
+  display: flex;
+  gap: 6px;
+}
+
 .mt-module .tab {
-  padding:6px 10px; border:1px solid #cbd5e1; background:#f8fafc; border-radius:8px;
-  cursor:pointer; font-weight:600;
-}
-.mt-module .tab.active { background:#2563eb; color:#fff; border-color:#2563eb; }
-.mt-module .tab-tools { margin-left:auto; }
-.mt-module .btn.outline { border:1px solid #94a3b8; background:#fff; border-radius:8px; padding:6px 10px; cursor:pointer; }
-
-.mt-module .pane { display:none; }
-.mt-module .pane.active { display:block; }
-
-.mt-table { width:100%; border-collapse:collapse; table-layout:fixed; }
-.mt-table th, .mt-table td {
-  border:1px solid #e5e7eb; padding:6px 8px; text-align:center; vertical-align:middle;
-}
-.mt-table thead th { background:#f1f5f9; font-weight:700; }
-.mt-table input[type="text"]{
-  width:100%; box-sizing:border-box; padding:4px 6px; border:1px solid #cbd5e1; border-radius:6px;
-  background:#fff;
+  min-height: 40px;
+  padding: 7px 14px;
+  border: 1px solid #cbd5e1;
+  background: #f8fafc;
+  border-radius: 8px;
+  color: #334155;
+  cursor: pointer;
+  font-weight: 700;
 }
 
-/* 行追加で使うエラー強調 */
-.mt-row-error td { background:#fff1f2; }
+.mt-module .tab:hover {
+  background: #eef2f7;
+}
 
-/* フッター（集計行）の配色  */
-.mt-table tfoot tr.summary { background:#fff7e6; }         /* 共通のハイライト */
-.mt-table.mt-points tfoot tr.summary { background:#fff7e6; }/* 点数表（既存と同配色） */
-.mt-table.mt-rank   tfoot tr.summary { background:#fff7e6; }/* ★順位表にも同配色を適用 */
+.mt-module .tab.active {
+  background: #2e7d32;
+  border-color: #2e7d32;
+  color: #fff;
+}
 
-/* 見出し列をやや強調 */
-.mt-table .headcol { background:#f8fafc; font-weight:600; }
+.mt-module .tab-tools {
+  margin-left: auto;
+}
 
-/* ちょっと余白 */
-.mt-module .tabpanes { margin-top:6px; }
+.mt-module .btn.outline {
+  min-height: 40px;
+  padding: 7px 12px;
+  border: 1px solid #2e7d32;
+  border-radius: 8px;
+  background: #fff;
+  color: #246b29;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.mt-module .btn.outline:hover {
+  background: #edf7ee;
+}
+
+.mt-module button:focus-visible,
+.mt-module input:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, .2);
+  outline-offset: 1px;
+}
+
+.mt-module .swipe-hint {
+  display: none;
+  margin: 0 0 8px;
+  color: #64748b;
+  font-size: 12px;
+  text-align: center;
+}
+
+.mt-module .pane {
+  display: none;
+}
+
+.mt-module .pane.active {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scrollbar-gutter: stable;
+  -webkit-overflow-scrolling: touch;
+}
+
+.mt-table {
+  width: 100%;
+  min-width: 720px;
+  border-collapse: separate;
+  border-spacing: 0;
+  table-layout: fixed;
+}
+
+.mt-table th,
+.mt-table td {
+  min-width: 145px;
+  padding: 6px 8px;
+  border-right: 1px solid #e5e7eb;
+  border-bottom: 1px solid #e5e7eb;
+  background: #fff;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.mt-table tr > :first-child {
+  width: 72px;
+  min-width: 72px;
+  border-left: 1px solid #e5e7eb;
+}
+
+.mt-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  border-top: 1px solid #d7e6d9;
+  background: #e8f5e9;
+  color: #1f4322;
+  font-weight: 700;
+}
+
+.mt-table thead th:first-child {
+  left: 0;
+  z-index: 4;
+}
+
+.mt-table tbody tr:nth-child(even) td {
+  background: #f8fafc;
+}
+
+.mt-table input[type="text"] {
+  width: 100%;
+  height: 38px;
+  padding: 6px 8px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background: #fff;
+  color: #111827;
+  font-size: 15px;
+}
+
+.mt-table input[readonly] {
+  background: #f8fafc;
+}
+
+.mt-row-error td,
+.mt-table tbody tr.mt-row-error:nth-child(even) td {
+  background: #fee2e2;
+}
+
+.mt-row-error input {
+  border-color: #dc2626;
+}
+
+.mt-table tfoot tr.summary td {
+  background: #fff7e6;
+}
+
+.mt-table .headcol {
+  position: sticky;
+  left: 0;
+  z-index: 3;
+  background: #f1f5f9 !important;
+  font-weight: 700;
+}
+
+.mt-module .tabpanes {
+  margin-top: 6px;
+}
+
+@media (max-width: 768px) {
+  .mt-module {
+    padding: 10px 8px;
+    border-radius: 10px;
+  }
+
+  .mt-module .tabs {
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .mt-module .tab-list {
+    min-width: 0;
+  }
+
+  .mt-module .tab,
+  .mt-module .btn.outline {
+    min-height: 44px;
+    padding: 8px 10px;
+    font-size: 14px;
+  }
+
+  .mt-module .tab-tools {
+    flex: 0 0 auto;
+  }
+
+  .mt-module .swipe-hint {
+    display: block;
+  }
+
+  .mt-table {
+    width: max-content;
+    min-width: 100%;
+  }
+
+  .mt-table th,
+  .mt-table td {
+    width: 148px;
+    min-width: 148px;
+    padding: 5px 6px;
+  }
+
+  .mt-table tr > :first-child {
+    width: 58px;
+    min-width: 58px;
+  }
+
+  .mt-table input[type="text"] {
+    height: 44px;
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 390px) {
+  .mt-module .tab,
+  .mt-module .btn.outline {
+    padding-inline: 8px;
+    font-size: 13px;
+  }
+}

@@ -76,8 +76,7 @@
       // 組み立て → hidden にセット → submit
       const payload = buildSaveTablesRequest(players);
       document.getElementById('savePayload').value = JSON.stringify(payload);
-      console.log('payload', payload)
-      form.submit();
+       form.submit();
     });
   });
 })();

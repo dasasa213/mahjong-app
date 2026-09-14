@@ -4,25 +4,37 @@ import java.math.BigDecimal;
 
 public class OverallStats {
     private String userName;
-    private long totalPoint;        // 合計点数
+    private BigDecimal totalPoint;        // 合計点数
     private long totalAmount;       // 合計金額
     private BigDecimal avgRank;     // 平均順位(小数)
+    private BigDecimal recent100AvgRank; // 直近100半荘の平均順位(小数)
     private BigDecimal rate1;       // 1位率(%)
     private BigDecimal rate2;       // 2位率(%)
     private BigDecimal rate3;       // 3位率(%)
     private BigDecimal rate4;       // 4位率(%)
     private long participateDays;   // 参加日数(件数)
     private long hanshanCount;      // 半荘数
+    private BigDecimal hensa;       // 標準偏差
+    private BigDecimal hopeP;       // 1日の期待値
+    private BigDecimal beforePoint; //前半点数
+    private BigDecimal afterPoint;  //後半点数
+    private long handCount;              // 局数
+    private BigDecimal winRate;          // 和了率
+    private BigDecimal callRate;         // 副露率
+    private BigDecimal riichiRate;       // 立直率
+    private BigDecimal dealInRate;       // 放銃率
 
     // getter / setter
     public String getUserName() { return userName; }
     public void setUserName(String userName) { this.userName = userName; }
-    public long getTotalPoint() { return totalPoint; }
-    public void setTotalPoint(long totalPoint) { this.totalPoint = totalPoint; }
+    public BigDecimal getTotalPoint() { return totalPoint; }
+    public void setTotalPoint(BigDecimal totalPoint) { this.totalPoint = totalPoint; }
     public long getTotalAmount() { return totalAmount; }
     public void setTotalAmount(long totalAmount) { this.totalAmount = totalAmount; }
     public BigDecimal getAvgRank() { return avgRank; }
     public void setAvgRank(BigDecimal avgRank) { this.avgRank = avgRank; }
+    public BigDecimal getRecent100AvgRank() { return recent100AvgRank; }
+    public void setRecent100AvgRank(BigDecimal recent100AvgRank) { this.recent100AvgRank = recent100AvgRank; }
     public BigDecimal getRate1() { return rate1; }
     public void setRate1(BigDecimal rate1) { this.rate1 = rate1; }
     public BigDecimal getRate2() { return rate2; }
@@ -35,4 +47,22 @@ public class OverallStats {
     public void setParticipateDays(long participateDays) { this.participateDays = participateDays; }
     public long getHanshanCount() { return hanshanCount; }
     public void setHanshanCount(long hanshanCount) { this.hanshanCount = hanshanCount; }
+    public BigDecimal getHensa() { return hensa; }
+    public void setHensa(BigDecimal hensa) { this.hensa = hensa; }
+    public BigDecimal getAfterPoint() { return afterPoint; }
+    public void setAfterPoint(BigDecimal afterPoint) { this.afterPoint = afterPoint; }
+    public BigDecimal getBeforePoint() { return beforePoint; }
+    public void setBeforePoint(BigDecimal beforePoint) { this.beforePoint = beforePoint; }
+    public BigDecimal getHopeP() { return hopeP; }
+    public void setHopeP(BigDecimal hopeP) { this.hopeP = hopeP; }
+    public long getHandCount() { return handCount; }
+    public void setHandCount(long handCount) { this.handCount = handCount; }
+    public BigDecimal getWinRate() { return winRate; }
+    public void setWinRate(BigDecimal winRate) { this.winRate = winRate; }
+    public BigDecimal getCallRate() { return callRate; }
+    public void setCallRate(BigDecimal callRate) { this.callRate = callRate; }
+    public BigDecimal getRiichiRate() { return riichiRate; }
+    public void setRiichiRate(BigDecimal riichiRate) { this.riichiRate = riichiRate; }
+    public BigDecimal getDealInRate() { return dealInRate; }
+    public void setDealInRate(BigDecimal dealInRate) { this.dealInRate = dealInRate; }
 }

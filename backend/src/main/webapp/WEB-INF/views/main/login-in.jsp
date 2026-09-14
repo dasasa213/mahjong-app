@@ -7,19 +7,33 @@
 <title>ログイン</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <style>
-  html,body{height:100%;margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Hiragino Kaku Gothic ProN","Yu Gothic","メイリオ",sans-serif;background:#f3f4f6;color:#1f2937}
-  .wrap{min-height:100%;display:flex;align-items:center;justify-content:center;padding:24px}
-  .frame{width:900px;max-width:95vw;background:#e5e7eb;border:1px solid #cbd5e1;border-radius:8px;padding:48px}
-  .card{width:520px;max-width:90vw;margin:0 auto;background:#dbeafe;border-radius:8px;padding:40px 48px;box-shadow:0 1px 2px rgba(0,0,0,.05)}
-  h1{margin:0 0 24px;font-size:24px;letter-spacing:.1em;text-align:center}
-  .row{display:flex;align-items:center;gap:16px;margin:16px 0}
-  .label{width:120px;text-align:right;color:#374151}
-  .input{flex:1}
-  input[type=text],input[type=password]{width:100%;height:36px;border:1px solid #cbd5e1;border-radius:6px;padding:0 10px;background:#fff;box-sizing:border-box}
-  .actions{margin-top:28px;text-align:center}
-  .btn{display:inline-block;background:#f59e0b;border:none;color:#111827;font-weight:600;padding:10px 36px;border-radius:6px;cursor:pointer}
-  .error{margin-top:16px;text-align:center;color:#b91c1c;background:#fee2e2;border:1px solid #fecaca;border-radius:6px;padding:8px}
-  .note{margin-top:8px;text-align:center;color:#6b7280;font-size:12px}
+  *{box-sizing:border-box}
+  html,body{min-height:100%;margin:0}
+  body{min-height:100vh;background:linear-gradient(145deg,#edf5ee 0%,#f4f6f8 48%,#eef2f7 100%);color:#1f2937;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP","Hiragino Kaku Gothic ProN",Meiryo,sans-serif}
+  .wrap{min-height:100vh;display:grid;place-items:center;padding:24px}
+  .frame{width:min(920px,100%);padding:48px;border:1px solid #dfe3e8;border-radius:16px;background:rgba(255,255,255,.62)}
+  .card{width:min(500px,100%);margin:0 auto;padding:36px 42px;border:1px solid #dfe3e8;border-top:5px solid #2e7d32;border-radius:12px;background:#fff;box-shadow:0 16px 38px rgba(15,23,42,.1)}
+  h1{margin:0 0 26px;color:#1f2937;font-size:26px;letter-spacing:.08em;text-align:center}
+  .row{display:grid;grid-template-columns:120px 1fr;align-items:center;gap:14px;margin:16px 0}
+  .label{color:#374151;font-weight:600;text-align:right}
+  .input{min-width:0}
+  input[type=text],input[type=password]{width:100%;height:46px;padding:0 12px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;font-size:16px}
+  input:focus{outline:3px solid rgba(37,99,235,.18);border-color:#2563eb}
+  .actions{margin-top:26px;text-align:center}
+  .btn{width:min(240px,100%);min-height:48px;padding:11px 24px;border:0;border-radius:9px;background:#2e7d32;color:#fff;font-size:16px;font-weight:700;cursor:pointer}
+  .btn:hover{filter:brightness(.95)}
+  .btn:focus-visible{outline:3px solid rgba(37,99,235,.25);outline-offset:2px}
+  .error{margin-top:16px;padding:10px 12px;border:1px solid #ef9a9a;border-radius:8px;background:#ffebee;color:#b71c1c;text-align:center}
+  .note{margin-top:8px;color:#64748b;font-size:12px;text-align:center}
+  @media(max-width:640px){
+    .wrap{padding:14px}
+    .frame{padding:0;border:0;background:transparent}
+    .card{padding:28px 18px}
+    h1{font-size:24px}
+    .row{grid-template-columns:1fr;gap:7px;margin:18px 0}
+    .label{text-align:left}
+    .btn{width:100%}
+  }
 </style>
 </head>
 <body>

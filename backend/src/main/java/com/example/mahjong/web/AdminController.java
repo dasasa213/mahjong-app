@@ -44,11 +44,4 @@ public class AdminController {
         model.addAttribute("active", "accounts");
         return "admin/accounts";
     }
-
-    /** グループ管理 */
-    @GetMapping("/groups")
-    public String groups(Model model) {
-        model.addAttribute("active", "groups");
-        return "admin/groups";
-    }
 }

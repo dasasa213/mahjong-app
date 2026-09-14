@@ -4,7 +4,9 @@
 
 <u:layout title="新規対局：対局者選択" active="newgame">
   <div class="wrap">
-    <h2>対局者を選択（対局日：${gamedate}）</h2>
+    <div class="step-label">STEP 2 / 2</div>
+    <h2>対局者を選択</h2>
+    <p class="game-date">対局日：<strong>${gamedate}</strong></p>
 
     <form method="get" class="row">
       <input type="text" name="q" value="${query}" placeholder="ユーザ名で検索（部分一致）">
@@ -38,17 +40,33 @@
   </div>
 
   <style>
-    .wrap{max-width:900px;margin:16px auto;padding:0 12px}
-    .row{display:flex;gap:8px;margin:8px 0}
-    .card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px}
-    .toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-    .tbl{width:100%;border-collapse:collapse}
-    .tbl th,.tbl td{border-bottom:1px solid #eee;padding:8px 6px;text-align:left}
-    .btn{padding:8px 12px;border:1px solid #d1d5db;border-radius:10px;background:#f9fafb;text-decoration:none;cursor:pointer}
-    .btn-primary{background:#2563eb;border-color:#2563eb;color:#fff}
-    .actions{display:flex;gap:8px;margin-top:10px}
-    .muted{color:#6b7280}
-    @media (max-width:760px){.row{flex-direction:column}.actions{flex-direction:column}}
+    .wrap{max-width:900px;margin:0 auto}
+    .step-label{margin-bottom:5px;color:#2e7d32;font-size:.8rem;font-weight:700;letter-spacing:.06em}
+    .wrap h2{margin:0;font-size:1.2rem}
+    .game-date{margin:5px 0 14px;color:#475569}
+    .row{display:grid;grid-template-columns:minmax(180px,1fr) auto auto;gap:8px;margin-bottom:12px}
+    .row input{min-width:0;height:44px;padding:8px 11px;border:1px solid #cbd5e1;border-radius:8px;font-size:16px}
+    .card{padding:14px;background:#fff;border:1px solid #dfe3e8;border-radius:12px}
+    .toolbar{display:flex;justify-content:space-between;align-items:center;min-height:44px;margin-bottom:8px;padding:0 4px}
+    .toolbar label{display:flex;align-items:center;gap:7px;font-weight:600}
+    .toolbar input,.tbl input{width:20px;height:20px;accent-color:#2e7d32}
+    .tbl{width:100%;border-collapse:separate;border-spacing:0}
+    .tbl th,.tbl td{padding:11px 9px;border-bottom:1px solid #e5e7eb;text-align:left}
+    .tbl th{background:#e8f5e9;color:#1f4322}
+    .tbl tr:nth-child(even) td{background:#f8fafc}
+    .tbl td:first-child{text-align:center}
+    .btn{display:inline-flex;min-height:44px;align-items:center;justify-content:center;padding:8px 13px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;color:#334155;text-decoration:none;cursor:pointer;font-weight:600}
+    .btn-primary{background:#2e7d32;border-color:#2e7d32;color:#fff}
+    .actions{display:flex;justify-content:flex-end;gap:9px;margin-top:14px}
+    .muted{color:#64748b}
+    @media(max-width:760px){
+      .wrap h2{font-size:1.1rem}
+      .row{grid-template-columns:1fr 1fr}
+      .row input{grid-column:1/-1}
+      .card{padding:10px 8px}
+      .actions{display:grid;grid-template-columns:1fr 1fr}
+      .actions .btn{width:100%}
+    }
   </style>
 
   <script>
@@ -67,7 +85,7 @@
         const n = checks().filter(c=>c.checked).length;
         if(n < 4){
           e.preventDefault();
-          alert('最低4人を選択してください。');
+          showAppMessage('最低4人を選択してください。', '入力内容を確認してください');
         }
       });
     })();

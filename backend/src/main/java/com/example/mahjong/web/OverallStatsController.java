@@ -36,6 +36,12 @@ public class OverallStatsController {
         for (OverallStats r : rows) {
             byUser.put(r.getUserName(), r);
         }
+
+        for (Map.Entry<String, OverallStats> entry : byUser.entrySet()) {
+            OverallStats stats = entry.getValue();
+            service.hensa(stats);
+        }
+
         model.addAttribute("byUser", byUser);
         model.addAttribute("userNames", byUser.keySet()); // 列順管理
         model.addAttribute("active", "overall");          // サイドメニュー選択用（必要なら）

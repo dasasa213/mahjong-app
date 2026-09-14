@@ -2,25 +2,33 @@
 <%@ attribute name="active" required="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-<nav class="sidebar" id="sidebar">
+<nav class="sidebar" id="sidebar" aria-label="利用者メニュー">
   <div class="menu-header">
     <span class="menu-title">メニュー</span>
     <button type="button" class="menu-toggle" id="sidebar-toggle" aria-label="サイドメニュー切替">☰</button>
   </div>
 
   <ul class="menu-items">
-    <li class="${active=='user-home' ? 'active' : ''}">
+    <li class="${active=='home' || active=='user-home' ? 'active' : ''}">
       <a href="${pageContext.request.contextPath}/user/home">利用者ホーム</a>
     </li>
-    <li class="${active=='matches-new' ? 'active' : ''}">
+    <li class="${active=='new' || active=='newgame' || active=='matches-new' ? 'active' : ''}">
       <a href="${pageContext.request.contextPath}/user/matches/new">新規対局</a>
     </li>
     <li class="${active=='matches-edit' ? 'active' : ''}">
       <a href="${pageContext.request.contextPath}/user/matches/edit">対局編集</a>
     </li>
-    <li class="${active=='stats' ? 'active' : ''}">
+    <li class="${active=='stats' || active=='overall' ? 'active' : ''}">
       <a href="${pageContext.request.contextPath}/user/overall">総合成績</a>
     </li>
-    <!-- 追加メニューはここに -->
+    <li class="${active=='overall-chart' ? 'active' : ''}">
+      <a href="<c:url value='/user/overall/chart'/>">総合成績（グラフ）</a>
+    </li>
+    <li class="${active=='pairwise-rank' ? 'active' : ''}">
+      <a href="<c:url value='/user/pairwise-rank'/>">対人別成績</a>
+    </li>
+    <li class="${active=='counter' ? 'active' : ''}">
+      <a href="<c:url value='/user/counter'/>">対局カウンター</a>
+    </li>
   </ul>
 </nav>
