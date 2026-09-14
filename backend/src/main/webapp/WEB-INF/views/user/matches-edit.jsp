@@ -5,85 +5,98 @@
 
 <u:layout title="対局編集" active="${active}">
 
-  <!-- フラッシュメッセージ -->
   <c:if test="${not empty success}">
-    <div class="alert success">${success}</div>
+    <div class="alert success" role="status">${success}</div>
   </c:if>
   <c:if test="${not empty error}">
-    <div class="alert error">${error}</div>
+    <div class="alert error" role="alert">${error}</div>
   </c:if>
 
-  <!-- 検索フォーム -->
-  <form id="searchForm" method="get" action="${pageContext.request.contextPath}/user/matches/edit" class="search-form">
-    <label>From：
-      <input type="date" name="from" value="${from}" required />
-    </label>
-    <span class="tilde">～</span>
-    <label>To：
-      <input type="date" name="to" value="${to}" required />
-    </label>
-    <!-- 並び順 hidden -->
-    <input type="hidden" name="order" id="orderInput" value="${order}" />
-    <button type="submit" class="btn primary">検索</button>
-
-    <!-- 並び順トグル -->
-    <div class="toggle">
-      <span>古い順</span>
-      <label class="switch">
-        <input type="checkbox" id="orderToggle" <c:if test="${order == 'desc'}">checked</c:if> />
-        <span class="slider"></span>
+  <section class="search-card" aria-labelledby="search-title">
+    <h2 id="search-title">検索条件</h2>
+    <form id="searchForm" method="get"
+          action="${pageContext.request.contextPath}/user/matches/edit"
+          class="search-form">
+      <label class="date-field">
+        <span>開始日</span>
+        <input type="date" name="from" value="${from}" required />
       </label>
-      <span>新しい順</span>
+      <span class="tilde" aria-hidden="true">～</span>
+      <label class="date-field">
+        <span>終了日</span>
+        <input type="date" name="to" value="${to}" required />
+      </label>
+
+      <input type="hidden" name="order" id="orderInput" value="${order}" />
+
+      <button type="submit" class="btn primary search-btn">検索</button>
+
+      <div class="toggle">
+        <span>古い順</span>
+        <label class="switch">
+          <input type="checkbox" id="orderToggle"
+                 aria-label="新しい順に並べる"
+                 <c:if test="${order == 'desc'}">checked</c:if> />
+          <span class="slider"></span>
+        </label>
+        <span>新しい順</span>
+      </div>
+    </form>
+  </section>
+
+  <section class="list-card" aria-labelledby="list-title">
+    <div class="list-heading">
+      <h2 id="list-title">対局一覧</h2>
+      <span class="swipe-hint">横にスワイプして詳細を表示できます</span>
     </div>
-  </form>
 
-  <!-- 一覧 -->
-  <div class="list-wrap">
-    <table class="list">
-      <thead>
-      <tr>
-        <th style="width:90px">ID</th>
-        <th style="width:120px">対局日</th>
-        <th style="width:80px">回</th>
-        <th style="width:80px">レート</th>
-        <th style="width:110px">持ち点</th>
-        <th style="width:130px">返し点</th>
-        <th style="width:80px">ウマ1</th>
-        <th style="width:80px">ウマ2</th>
-        <th style="width:160px">操作</th>
-      </tr>
-      </thead>
-      <tbody>
-      <c:forEach var="r" items="${records}">
+    <div class="list-wrap" tabindex="0">
+      <table class="list">
+        <thead>
         <tr>
-          <td>${r.id}</td>
-          <td><c:out value="${r.gamedate}"/></td>
-          <td>${r.gameno}</td>
-          <td>${r.rate}</td>
-          <td>${r.points}</td>
-          <td>${r.returnpoints}</td>
-          <td><c:out value="${r.uma1}"/></td>
-          <td><c:out value="${r.uma2}"/></td>
-          <td class="ops">
-            <a class="btn" href="${pageContext.request.contextPath}/user/matches/edit/${r.id}">編集</a>
-            <!-- 削除ボタン：モーダル起動 -->
-            <button type="button" class="btn danger"
-                    data-id="${r.id}"
-                    onclick="openDeleteModal(this)">削除</button>
-          </td>
+          <th>ID</th>
+          <th>対局日</th>
+          <th>回</th>
+          <th>レート</th>
+          <th>持ち点</th>
+          <th>返し点</th>
+          <th>ウマ1</th>
+          <th>ウマ2</th>
+          <th>操作</th>
         </tr>
-      </c:forEach>
-      <c:if test="${empty records}">
-        <tr><td colspan="9" class="empty">該当データがありません</td></tr>
-      </c:if>
-      </tbody>
-    </table>
-  </div>
+        </thead>
+        <tbody>
+        <c:forEach var="r" items="${records}">
+          <tr>
+            <td>${r.id}</td>
+            <td><c:out value="${r.gamedate}"/></td>
+            <td>${r.gameno}</td>
+            <td>${r.rate}</td>
+            <td>${r.points}</td>
+            <td>${r.returnpoints}</td>
+            <td><c:out value="${r.uma1}"/></td>
+            <td><c:out value="${r.uma2}"/></td>
+            <td class="ops">
+              <a class="btn edit" href="${pageContext.request.contextPath}/user/matches/edit/${r.id}">編集</a>
+              <button type="button" class="btn danger"
+                      data-id="${r.id}"
+                      onclick="openDeleteModal(this)">削除</button>
+            </td>
+          </tr>
+        </c:forEach>
+        <c:if test="${empty records}">
+          <tr><td colspan="9" class="empty">該当データがありません</td></tr>
+        </c:if>
+        </tbody>
+      </table>
+    </div>
+  </section>
 
-  <!-- 削除モーダル -->
-  <dialog id="delModal">
-    <form method="post" action="${pageContext.request.contextPath}/user/matches/delete" onsubmit="return validateAgree()">
-      <h3>対局レコード削除</h3>
+  <dialog id="delModal" aria-labelledby="delete-title">
+    <form method="post"
+          action="${pageContext.request.contextPath}/user/matches/delete"
+          onsubmit="return validateAgree()">
+      <h3 id="delete-title">対局レコード削除</h3>
       <p>この操作は取り消せません。選択中のレコードを削除します。よろしいですか？</p>
       <input type="hidden" name="id" id="delId">
       <input type="hidden" name="from" value="${from}">
@@ -101,45 +114,69 @@
   </dialog>
 
   <style>
-    .search-form { display:flex; align-items:center; gap:.5rem; margin: 12px 0 16px; flex-wrap: wrap; }
-    .tilde { margin:0 .25rem; }
-    .list-wrap { overflow-x:auto; }
-    .list { width:100%; border-collapse:collapse; }
-    .list th, .list td { border:1px solid #ddd; padding:6px 8px; text-align:center; }
-    .list thead th { background:#f2f6ff; }
-    .ops { display:flex; gap:20px; justify-content:center; }
-    .btn { padding:6px 10px; border:1px solid #888; background:#fff; cursor:pointer; border-radius:6px; }
-    .btn.primary { background:#1967d2; color:#fff; border-color:#1967d2; }
-    .btn.danger { background:#d21919; color:#fff; border-color:#d21919; }
-    .alert { padding:8px 10px; border-radius:6px; margin:8px 0; }
-    .alert.success { background:#e8f5e9; color:#2e7d32; }
-    .alert.error { background:#fdecea; color:#b71c1c; }
-    .empty { text-align:center; color:#666; }
-    dialog { border:none; border-radius:10px; padding:16px; max-width:420px; }
-    .agree { display:flex; align-items:center; gap:.5rem; margin-top:10px; }
-    .modal-actions { display:flex; justify-content:flex-end; gap:8px; margin-top:14px; }
-    /* 並び替えトグル */
-    .toggle { display:flex; align-items:center; gap:.5rem; margin-left: 12px; }
-    .switch { position: relative; display: inline-block; width: 48px; height: 24px; }
-    .switch input { display:none; }
-    .slider { position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0;
-              background:#ccc; transition:.2s; border-radius:24px; }
-    .slider:before { position:absolute; content:""; height:18px; width:18px; left:3px; bottom:3px;
-                     background:white; transition:.2s; border-radius:50%; }
-    .switch input:checked + .slider { background:#1967d2; }
-    .switch input:checked + .slider:before { transform: translateX(24px); }
+    .alert{padding:10px 12px;border-radius:8px;margin:0 0 12px}
+    .alert.success{background:#e8f5e9;color:#1b5e20}
+    .alert.error{background:#fdecea;color:#b71c1c}
+    .search-card,.list-card{background:#fff;border:1px solid #dfe3e8;border-radius:12px;padding:16px}
+    .search-card h2,.list-heading h2{margin:0;font-size:1.05rem}
+    .search-form{display:flex;align-items:end;gap:10px;margin-top:12px;flex-wrap:wrap}
+    .date-field{display:flex;flex-direction:column;gap:5px;color:#4b5563;font-size:.88rem;font-weight:600}
+    .date-field input{height:42px;padding:8px 10px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;font-size:16px}
+    .date-field input:focus{outline:3px solid rgba(37,99,235,.18);border-color:#2563eb}
+    .tilde{align-self:center;margin-top:20px;color:#64748b}
+    .btn{display:inline-flex;min-height:40px;align-items:center;justify-content:center;padding:7px 12px;border:1px solid #94a3b8;border-radius:7px;background:#fff;color:#1f2937;text-decoration:none;cursor:pointer;font-weight:600;white-space:nowrap}
+    .btn.primary{background:#1976d2;color:#fff;border-color:#1976d2}
+    .btn.edit{color:#1d4ed8;border-color:#93c5fd}
+    .btn.danger{background:#dc2626;color:#fff;border-color:#dc2626}
+    .search-btn{min-width:92px}
+    .toggle{display:flex;align-items:center;gap:7px;min-height:42px;margin-left:auto;color:#475569;font-size:.9rem}
+    .switch{position:relative;display:inline-block;width:48px;height:26px}
+    .switch input{position:absolute;opacity:0}
+    .slider{position:absolute;cursor:pointer;inset:0;background:#cbd5e1;transition:.2s;border-radius:26px}
+    .slider:before{position:absolute;content:"";height:20px;width:20px;left:3px;bottom:3px;background:#fff;transition:.2s;border-radius:50%;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+    .switch input:checked + .slider{background:#2e7d32}
+    .switch input:checked + .slider:before{transform:translateX(22px)}
+    .switch input:focus-visible + .slider{outline:3px solid rgba(37,99,235,.25);outline-offset:2px}
 
-    /* （任意）スマホは少し広めに： */
-    @media (max-width: 480px) {
-      .ops { gap:26px; }
+    .list-card{margin-top:16px;padding:0;overflow:hidden}
+    .list-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-bottom:1px solid #e5e7eb}
+    .swipe-hint{display:none;color:#64748b;font-size:12px}
+    .list-wrap{overflow-x:auto;overscroll-behavior-inline:contain;-webkit-overflow-scrolling:touch}
+    .list{width:100%;min-width:960px;border-collapse:separate;border-spacing:0}
+    .list th,.list td{padding:10px 9px;border-right:1px solid #e5e7eb;border-bottom:1px solid #e5e7eb;text-align:center;white-space:nowrap}
+    .list thead th{position:sticky;top:0;z-index:2;background:#e8f5e9;color:#1f4322}
+    .list tr:nth-child(even) td{background:#f8fafc}
+    .list th:first-child,.list td:first-child{position:sticky;left:0;z-index:3;background:#fff}
+    .list thead th:first-child{z-index:4;background:#dcefe0}
+    .list tr:nth-child(even) td:first-child{background:#f1f5f9}
+    .ops{display:flex;gap:8px;justify-content:center}
+    .empty{text-align:center!important;color:#64748b}
+    dialog{width:min(420px,calc(100vw - 24px));border:0;border-radius:12px;padding:20px;box-shadow:0 20px 48px rgba(15,23,42,.3)}
+    dialog::backdrop{background:rgba(15,23,42,.55)}
+    dialog h3{margin-top:0}
+    .agree{display:flex;align-items:center;gap:8px;min-height:44px;margin-top:12px}
+    .agree input{width:20px;height:20px}
+    .modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
+
+    @media(max-width:768px){
+      .search-card{padding:12px}
+      .search-form{display:grid;grid-template-columns:1fr auto 1fr;gap:8px}
+      .date-field input{width:100%;min-width:0;height:46px}
+      .tilde{margin-top:22px}
+      .search-btn{grid-column:1/-1;min-height:46px}
+      .toggle{grid-column:1/-1;justify-content:center;margin-left:0}
+      .list-card{margin-top:12px}
+      .list-heading{padding:12px}
+      .swipe-hint{display:inline}
+      .list{min-width:900px}
+      .list th,.list td{padding:8px}
+      .btn{min-height:44px}
     }
   </style>
 
-
   <script>
     function openDeleteModal(btn){
-      const id = btn.getAttribute('data-id');
-      document.getElementById('delId').value = id;
+      document.getElementById('delId').value = btn.getAttribute('data-id');
       document.getElementById('agreeChk').checked = false;
       document.getElementById('delModal').showModal();
     }
@@ -153,12 +190,10 @@
       }
       return true;
     }
-
-    // 並び順トグル
     (function(){
       const toggle = document.getElementById('orderToggle');
       const orderInput = document.getElementById('orderInput');
-      if (toggle){
+      if(toggle){
         toggle.addEventListener('change', function(){
           orderInput.value = this.checked ? 'desc' : 'asc';
           document.getElementById('searchForm').submit();
