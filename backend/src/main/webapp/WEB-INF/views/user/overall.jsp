@@ -12,7 +12,7 @@
     .overall-wrap{width:100%;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;max-height:calc(100vh - 150px)}
     .overall-table{width:100%;min-width:860px;border-collapse:separate;border-spacing:0}
     .overall-table th,.overall-table td{min-width:132px;padding:10px 12px;border-right:1px solid #e5e7eb;border-bottom:1px solid #e5e7eb;text-align:right;white-space:nowrap}
-    .overall-table th:first-child,.overall-table td:first-child{width:190px;min-width:190px;text-align:left}
+    .overall-table th:first-child,.overall-table td:first-child{width:170px;min-width:170px;text-align:left}
     .overall-table thead th{position:sticky;top:0;z-index:3;background:#2e7d32;color:#fff;font-weight:700}
     .overall-table thead th:first-child{left:0;z-index:5;background:#256b2a}
     .overall-table tbody tr:nth-child(even) td{background:#f8fafc}
@@ -35,7 +35,7 @@
       .overall-wrap{max-height:calc(100dvh - 140px)}
       .overall-table{min-width:max-content}
       .overall-table th,.overall-table td{min-width:124px;padding:10px 9px;font-size:14px}
-      .overall-table th:first-child,.overall-table td:first-child{width:158px;min-width:158px}
+      .overall-table th:first-child,.overall-table td:first-child{width:140px;min-width:140px}
     }
   </style>
 
@@ -89,7 +89,7 @@
 
         <!-- 直近100半荘の平均順位（小さいほど良いので色付けはしない） -->
         <tr>
-          <td class="metric-name">直近100半荘平均順位</td>
+          <td class="metric-name">直近100戦平均</td>
           <c:forEach var="name" items="${userNames}">
             <td>
               <fmt:formatNumber value="${byUser[name].recent100AvgRank}" maxFractionDigits="2" minFractionDigits="2" />
