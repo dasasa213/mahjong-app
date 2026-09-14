@@ -30,7 +30,11 @@
     .history-table{width:100%;min-width:760px;border-collapse:separate;border-spacing:0}
     .history-table th,.history-table td{padding:10px 12px;border-right:1px solid #e5e7eb;border-bottom:1px solid #e5e7eb;text-align:center;white-space:nowrap}
     .history-table th{background:#2e7d32;color:#fff}
+    .history-table th:first-child,.history-table td:first-child{position:sticky;left:0;min-width:120px}
+    .history-table th:first-child{z-index:3;background:#256b2a}
+    .history-table td:first-child{z-index:2;background:#fff;box-shadow:2px 0 4px rgba(15,23,42,.08)}
     .history-table tbody tr:nth-child(even) td{background:#f8fafc}
+    .history-table tbody tr:nth-child(even) td:first-child{background:#f8fafc}
     .history-actions{white-space:nowrap}
     .delete-form{display:inline}
     .edit-btn,.delete-btn{display:inline-flex;min-height:40px;align-items:center;justify-content:center;margin:0 3px;padding:7px 11px;border-radius:7px;cursor:pointer;text-decoration:none;font-weight:600}
