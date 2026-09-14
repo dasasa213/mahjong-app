@@ -38,7 +38,14 @@
       // 計算ボタン
       if (this.calcBtnId) {
         const btn = document.getElementById(this.calcBtnId);
-        if (btn) btn.addEventListener('click', () => this.calculateAll());
+        if (btn) btn.addEventListener('click', () => {
+          const succeeded = this.calculateAll();
+          if (succeeded && window.showAppMessage) {
+            window.showAppMessage('計算が正常に完了しました。', '計算完了');
+          } else if (!succeeded && window.showAppMessage) {
+            window.showAppMessage('未入力の項目、または合計が100,000点になっていない行があります。', '入力内容を確認してください');
+          }
+        });
       }
     }
 
@@ -182,6 +189,7 @@
 
       // 行ごとに検証 & 計算
       const validRows = [];
+      let invalidRowCount = 0;
       rows.forEach(r => {
         const { rowIndex, values } = r;            // values: {col:number -> score:number}
         // 未入力列を除外した有効セル
@@ -190,12 +198,14 @@
         // ちょうど4セル？
         if (entries.length !== 4) {
           this._markError(this.scoreTable, rowIndex);
+          invalidRowCount++;
           return;
         }
         // 合計10万？
         const total = entries.reduce((s, [, v]) => s + v, 0);
         if (total !== 100000) {
           this._markError(this.scoreTable, rowIndex);
+          invalidRowCount++;
           return;
         }
         validRows.push(r);
@@ -215,6 +225,7 @@
       // フッターの集計
       this._writeRankSummary(ranksByRow);
       this._writePointsSummary();
+      return invalidRowCount === 0;
     }
 
     _readScoreRows() {
