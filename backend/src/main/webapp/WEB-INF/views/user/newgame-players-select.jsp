@@ -85,7 +85,7 @@
         const n = checks().filter(c=>c.checked).length;
         if(n < 4){
           e.preventDefault();
-          alert('最低4人を選択してください。');
+          showAppMessage('最低4人を選択してください。', '入力内容を確認してください');
         }
       });
     })();
