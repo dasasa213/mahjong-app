@@ -67,7 +67,7 @@ test.describe('利用者・詳細機能',()=>{
     test.skip(await edit.count()===0,'編集対象データがありません');
     await edit.click();
     await shot(page,'対局編集-詳細-点棒');
-    for(const [key,label] of [['rank','順位'],['points','点数']] as const){ const tab=page.locator(`#mt-container .tab[data-tab="${key}"]`); await expect(tab).toBeVisible(); await tab.click(); await expect(page.locator(`#mt-pane-${key}`)).toHaveClass(/active/); await shot(page,'対局編集-詳細-'+label); }
+    for(const [key,label] of [['rank','順位'],['points','点数']] as const){ const tab=page.locator(`.mt-module .tab[data-tab="${key}"]`); await expect(tab).toBeVisible(); await tab.click(); await expect(page.locator(`#mt-pane-${key}`)).toHaveClass(/active/); await shot(page,'対局編集-詳細-'+label); }
     const before=await page.locator('#mt-pane-score tbody tr').count();
     await page.getByRole('button',{name:'＋ 行を追加'}).click();
     await expect(page.locator('#mt-pane-score tbody tr')).toHaveCount(before+1);
@@ -101,7 +101,7 @@ test.describe('利用者・詳細機能',()=>{
     await page.getByRole('button',{name:'計算',exact:true}).click();
     await shot(page,'ポップアップ-対局編集-計算完了');
     await closeAppModal(page);
-    const rankTab=page.locator('#mt-container .tab[data-tab="rank"]');
+    const rankTab=page.locator('.mt-module .tab[data-tab="rank"]');
     await expect(rankTab).toBeVisible();
     await rankTab.click();
     await expect(page.locator('#mt-pane-rank')).toHaveClass(/active/);
