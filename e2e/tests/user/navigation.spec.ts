@@ -18,7 +18,26 @@ test('利用者の全メニュー・遷移画面・カウンターポップア�
   const pages=[['利用者ホーム','user/home'],['新規対局-日付','user/newgame/date'],['対局編集一覧','user/matches/edit'],['総合成績','user/overall'],['総合成績グラフ','user/overall/chart'],['対人別成績','user/pairwise-rank'],['対局カウンター','user/counter']] as const;
   for(const [name,url] of pages){ await page.goto(url); await expect(page.locator('body')).not.toContainText('Internal Server Error'); await shot(page,'全画面-'+name); }
   await page.goto('user/newgame/date'); await page.getByRole('button',{name:'対局者選択へ進む'}).click(); await expect(page).toHaveURL(/\/user\/newgame\/players$/); await shot(page,'全画面-新規対局-対局者選択');
-  await page.goto('user/matches/edit'); const edit=page.getByRole('link',{name:'編集'}).first(); if(await edit.count()){await edit.click(); await shot(page,'全画面-対局編集詳細');}
+
+  await page.goto('user/matches/edit');
+  const edit=page.getByRole('link',{name:'編集'}).first();
+  if(await edit.count()){
+    await edit.evaluate((element) => {
+      let current: HTMLElement | null = element as HTMLElement;
+      while (current) {
+        if (current.scrollWidth > current.clientWidth) {
+          current.scrollLeft = current.scrollWidth;
+          break;
+        }
+        current = current.parentElement;
+      }
+    });
+    await edit.scrollIntoViewIfNeeded();
+    await expect(edit).toBeVisible();
+    await edit.click();
+    await shot(page,'全画面-対局編集詳細');
+  }
+
   await page.goto('user/counter'); for(const [id,v] of [['handCount','1'],['winCount','2']] as const) await page.locator('#'+id).evaluate((e:HTMLInputElement,x)=>e.value=x,v);
   await page.getByRole('button',{name:'登録',exact:true}).click(); await expect(page.locator('#messageModal')).toBeVisible(); await shot(page,'ポップアップ-カウンター入力エラー');
   await page.locator('#messageModal').getByRole('button',{name:'OK'}).click();
