@@ -9,10 +9,14 @@ test('対局編集の検索・並び順・詳細タブ・行追加を確認',asy
  // toggle の change ハンドラにより order を送信して再検索させる。
  const currentOrder=(await order.inputValue()) || 'desc';
  const nextOrder=currentOrder==='asc' ? 'desc' : 'asc';
- await Promise.all([
-   page.waitForURL(new RegExp('order='+nextOrder)),
-   nextOrder==='desc' ? toggle.check() : toggle.uncheck()
- ]);
+ // checkbox 本体は装飾用 slider に覆われているため、check/uncheck ではなく
+ // DOM 上で checked を変更して change を発火する。アプリ本体の change
+ // ハンドラ（orderInput 更新 + form.submit）はそのまま通る。
+ await toggle.evaluate((el: HTMLInputElement, checked: boolean) => {
+   el.checked = checked;
+   el.dispatchEvent(new Event('change', { bubbles: true }));
+ }, nextOrder === 'desc');
+ await page.waitForURL(url => url.searchParams.get('order') === nextOrder);
  await expect(page.locator('#searchForm #orderInput')).toHaveValue(nextOrder);
  await shot(page,'対局編集-検索結果');
  test.skip(!(await detailPage(page)),'詳細表示できる対局データがありません');await shot(page,'対局編集-詳細-点棒');
