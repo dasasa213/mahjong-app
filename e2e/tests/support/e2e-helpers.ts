@@ -45,13 +45,20 @@ export async function clickMenuLink(page: Page, name: string) {
   const link = page.getByRole('link', { name, exact: true }).first();
 
   if (!(await link.isVisible().catch(() => false))) {
-    const menuButton = page.getByRole('button', { name: /メニュー|menu/i }).first();
-    if (await menuButton.count()) {
-      await menuButton.click();
+    // モバイルでは sidebar 内の「サイドメニュー切替」もDOM上に存在するが、
+    // 画面外に隠れている。実際に表示されている #mobile-menu-toggle を優先する。
+    const mobileMenuButton = page.locator('#mobile-menu-toggle');
+    if (await mobileMenuButton.isVisible().catch(() => false)) {
+      await mobileMenuButton.click();
     } else {
-      const fallback = page.locator('button.menu-toggle, .menu-toggle, .hamburger, #menuToggle, [aria-controls*="menu"]').first();
-      await expect(fallback, 'モバイル用メニューボタンが見つかりません').toBeVisible();
-      await fallback.click();
+      const menuButton = page.getByRole('button', { name: /メニューを開く|メニュー|menu/i }).filter({ visible: true }).first();
+      if (await menuButton.count()) {
+        await menuButton.click();
+      } else {
+        const fallback = page.locator('button.menu-toggle:visible, .mobile-menu-toggle:visible, .hamburger:visible, #menuToggle:visible, [aria-controls*="menu"]:visible').first();
+        await expect(fallback, '表示中のモバイル用メニューボタンが見つかりません').toBeVisible();
+        await fallback.click();
+      }
     }
   }
 
