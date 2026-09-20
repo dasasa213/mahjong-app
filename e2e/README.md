@@ -9,51 +9,41 @@
 
 ### アプリ起動
 
-このアプリは **TomcatへWARを配置して起動する構成** です。Spring Boot の `spring-boot:run` ではありません。
+このアプリは Spring Boot で起動します。E2E実行時は、必ずテストDB `mahjong_test` を指定してください。
 
 #### 1. テストDB接続情報を設定
-PowerShellで次を設定します。
 
 ```powershell
 $env:DB_URL="jdbc:mysql://<TEST_DB_HOST>:3306/mahjong_test?useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=utf8&serverTimezone=Asia/Tokyo"
 $env:DB_USERNAME="mahjong_test_user"
 $env:DB_PASSWORD="<TEST_DB_PASSWORD>"
-# 値は共有されたE2E用DBのものに置き換える
 ```
 
-#### 2. WARをビルド
-リポジトリ直下から実行します。
+DBパスワードはGitにコミットしません。共有されたテストDB用の値を設定し、本番DBの値は使用しないでください。
+
+#### 2. アプリを起動
+
+リポジトリ直下から次を実行します。
 
 ```powershell
-cd backend\mahjong-deploy
-mvn clean package
+cd backend
+mvn spring-boot:run
 ```
 
-ビルド後、`target` 配下に生成されたWARをTomcatの `webapps` に `mahjong-deploy.war` として配置します。
-
-#### 3. Tomcatを起動
-Tomcat 9 の `bin` ディレクトリから起動します。例:
+Maven Wrapperを利用する環境では、次でも構いません。
 
 ```powershell
-cd C:\path\to\apache-tomcat-9\bin
-.\startup.bat
+cd backend
+.\mvnw.cmd spring-boot:run
 ```
 
-IntelliJでTomcatのRun Configurationを設定済みの場合は、IDEの実行ボタンから起動しても構いません。その場合も、上記DB環境変数をTomcatへ渡してください。
+#### 3. 起動確認
 
-#### 4. 起動確認
-ブラウザで次を開きます。
+ブラウザで次を開き、ログイン画面が表示されることを確認します。
 
 `http://localhost:8080/mahjong-deploy/main/login-in`
 
-ログイン画面が表示されたら、別PowerShellでPlaywrightを実行します。
-
-> Tomcat 9 / Maven / Javaの場所が未設定の場合は、先にそれらをインストール・設定してください。E2E実行者が既存のローカル開発環境をcloneしただけの場合でも、「DB環境変数 → WARビルド → Tomcat配置・起動 → URL確認 → Playwright」の順に進めれば確認できます。
-
-
-ブラウザで `http://localhost:8080/mahjong-deploy/main/login-in` が表示できることを確認します。
-
-> DBパスワードはGitにコミットしません。共有されたテストDB用の値を各自の環境変数に設定してください。本番DBの値は使用しないでください。
+アプリを起動したPowerShellはそのままにし、Playwrightは別のPowerShellから実行します。
 
 ### Playwright初回準備
 別のPowerShellを開きます。
