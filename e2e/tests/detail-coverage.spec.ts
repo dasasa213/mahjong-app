@@ -58,8 +58,10 @@ test.describe('利用者・詳細機能',()=>{
     const searchForm=page.locator('#searchForm');
     const from=searchForm.locator('input[name="from"]'), to=searchForm.locator('input[name="to"]');
     if(await from.count()) { await from.fill('2020-01-01'); await to.fill('2099-12-31'); await searchForm.getByRole('button',{name:'検索'}).click(); }
-    const orderToggle=searchForm.locator('#orderToggle');
-    if(await orderToggle.count() && await orderToggle.isChecked()){ await orderToggle.uncheck(); await page.waitForLoadState('domcontentloaded'); }
+    const orderInput=searchForm.locator('#orderInput');
+    await orderInput.evaluate((e: HTMLInputElement)=>e.value='asc');
+    await searchForm.getByRole('button',{name:'検索'}).click();
+    await expect(orderInput).toHaveValue('asc');
     await shot(page,'対局編集-検索結果');
     const edit=page.getByRole('link',{name:'編集'}).first();
     test.skip(await edit.count()===0,'編集対象データがありません');
@@ -74,12 +76,20 @@ test.describe('利用者・詳細機能',()=>{
 
   test('対局編集の計算エラーと正常計算ポップアップを確認',async({page})=>{
     await page.goto('user/matches/edit');
-    const edit=page.getByRole('link',{name:'編集'}).first();
-    test.skip(await edit.count()===0,'編集対象データがありません');
-    await edit.click();
-    const row=page.locator('#mt-pane-score table.mt-score tbody tr').first();
-    const inputs=row.locator('td input');
-    await expect(inputs,'4人対局データが必要です').toHaveCount(4);
+    const editLinks=page.getByRole('link',{name:'編集'});
+    const editCount=await editLinks.count();
+    test.skip(editCount===0,'編集対象データがありません');
+    const hrefs:string[]=[];
+    for(let i=0;i<editCount;i++){ const href=await editLinks.nth(i).getAttribute('href'); if(href) hrefs.push(href); }
+    let inputs=page.locator('#mt-pane-score table.mt-score tbody tr').first().locator('td input');
+    let found=false;
+    for(const href of hrefs){
+      await page.goto(href);
+      await page.locator('#mt-pane-score table.mt-score').waitFor({state:'attached'}).catch(()=>{});
+      inputs=page.locator('#mt-pane-score table.mt-score tbody tr').first().locator('td input');
+      if(await inputs.count()===4){ found=true; break; }
+    }
+    test.skip(!found,'4人の対局編集データがありません');
     for(let i=0;i<4;i++) await inputs.nth(i).fill('');
     await inputs.nth(0).fill('1000');
     await page.getByRole('button',{name:'計算',exact:true}).click();
