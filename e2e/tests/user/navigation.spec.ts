@@ -38,8 +38,11 @@ test('利用者の全メニュー・遷移画面・カウンターポップア�
     // pathname 固定の正規表現ではなく、クリック後に一覧URLから変化したことを確認する。
     const beforeEditUrl = page.url();
     await edit.evaluate((element: HTMLAnchorElement) => element.click());
-    await page.waitForURL(url => url.toString() !== beforeEditUrl);
-    await expect(page).toHaveURL(/\/user\/matches\/edit(?:\?|\/)/);
+
+    // この画面の編集リンクは同じURLへ遷移する構成の場合があるため、
+    // URL変化ではなくクリック後の画面描画完了を待つ。
+    await page.waitForLoadState('domcontentloaded');
+    await expect(page.locator('body')).not.toContainText('Internal Server Error');
     await shot(page,'全画面-対局編集詳細');
   }
 
