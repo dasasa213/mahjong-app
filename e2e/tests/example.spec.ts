@@ -42,5 +42,32 @@ test('利用者でログインして主要画面を巡回できる', async ({ pa
     await page.getByRole('link', { name, exact: true }).click();
     await expect(page).toHaveURL(url);
     await expect(page.locator('body')).not.toContainText('Internal Server Error');
+    await page.screenshot({
+      path: `screenshots/chromium-${name.replace(/[（）]/g, '').replace(/[^\\p{L}\\p{N}]+/gu, '-')}.png`,
+      fullPage: true,
+    });
   }
+});
+
+test('対局カウンターの入力検証が動作する', async ({ page }) => {
+  test.skip(!loginName || !loginPassword,
+    'E2E_LOGIN_NAME / E2E_LOGIN_PASSWORD を設定すると更新系テストを実行します');
+
+  await page.goto('main/login-in');
+  await page.locator('input[name="loginName"]').fill(loginName!);
+  await page.locator('input[name="password"]').fill(loginPassword!);
+  await page.getByRole('button', { name: 'ログイン' }).click();
+  await expect(page).toHaveURL(/\\/user\\/home$/);
+
+  await page.goto('user/counter');
+
+  // DBを書き換えずに、画面側の入力検証を確認する。
+  await page.locator('#handCount').evaluate((el: HTMLInputElement) => el.value = '1');
+  await page.locator('#winCount').evaluate((el: HTMLInputElement) => el.value = '2');
+  await page.getByRole('button', { name: '登録', exact: true }).click();
+
+  await expect(page.locator('#messageModal')).toBeVisible();
+  await expect(page.locator('#messageModalText'))
+    .toHaveText('和了数は局数以下にしてください。');
+  await page.screenshot({ path: 'screenshots/chromium-counter-validation.png', fullPage: true });
 });
