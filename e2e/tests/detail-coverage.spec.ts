@@ -67,7 +67,7 @@ test.describe('利用者・詳細機能',()=>{
     test.skip(await edit.count()===0,'編集対象データがありません');
     await edit.click();
     await shot(page,'対局編集-詳細-点棒');
-    for(const tab of ['順位','点数']){ await page.getByRole('button',{name:tab,exact:true}).click(); await shot(page,'対局編集-詳細-'+tab); }
+    for(const [key,label] of [['rank','順位'],['points','点数']] as const){ const tab=page.locator(`#mt-container .tab[data-tab="${key}"]`); await expect(tab).toBeVisible(); await tab.click(); await expect(page.locator(`#mt-pane-${key}`)).toHaveClass(/active/); await shot(page,'対局編集-詳細-'+label); }
     const before=await page.locator('#mt-pane-score tbody tr').count();
     await page.getByRole('button',{name:'＋ 行を追加'}).click();
     await expect(page.locator('#mt-pane-score tbody tr')).toHaveCount(before+1);
@@ -85,8 +85,10 @@ test.describe('利用者・詳細機能',()=>{
     let found=false;
     for(const href of hrefs){
       await page.goto(href);
-      await page.locator('#mt-pane-score table.mt-score').waitFor({state:'attached'}).catch(()=>{});
-      inputs=page.locator('#mt-pane-score table.mt-score tbody tr').first().locator('td input');
+      const table=page.locator('#mt-pane-score table.mt-score');
+      const attached=await table.waitFor({state:'attached',timeout:1500}).then(()=>true).catch(()=>false);
+      if(!attached) continue;
+      inputs=table.locator('tbody tr').first().locator('td input');
       if(await inputs.count()===4){ found=true; break; }
     }
     test.skip(!found,'4人の対局編集データがありません');
@@ -99,7 +101,10 @@ test.describe('利用者・詳細機能',()=>{
     await page.getByRole('button',{name:'計算',exact:true}).click();
     await shot(page,'ポップアップ-対局編集-計算完了');
     await closeAppModal(page);
-    await page.getByRole('button',{name:'順位',exact:true}).click();
+    const rankTab=page.locator('#mt-container .tab[data-tab="rank"]');
+    await expect(rankTab).toBeVisible();
+    await rankTab.click();
+    await expect(page.locator('#mt-pane-rank')).toHaveClass(/active/);
     await expect(page.locator('#mt-pane-rank tbody tr').first().locator('input').nth(0)).toHaveValue('1');
     await shot(page,'対局編集-正常計算結果');
   });
