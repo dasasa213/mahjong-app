@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { assertTestDb, login, shot, userName, userPassword } from '../support/e2e-helpers';
+import { assertTestDb, clickMenuLink, login, shot, userName, userPassword } from '../support/e2e-helpers';
 
 test.beforeEach(async ({ page }) => { await assertTestDb(page); await login(page,userName,userPassword,/\/user\/home$/); });
 
@@ -7,8 +7,10 @@ test('利用者でログインして主要メニュー全画面を取得でき�
   await shot(page, '主要画面-利用者ホーム');
   const destinations = [['新規対局',/\/user\/newgame\/date$/],['対局編集',/\/user\/matches\/edit/],['総合成績',/\/user\/overall$/],['総合成績（グラフ）',/\/user\/overall\/chart$/],['対人別成績',/\/user\/pairwise-rank$/],['対局カウンター',/\/user\/counter$/]] as const;
   for (const [name,url] of destinations) {
-    await page.getByRole('link',{name,exact:true}).click(); await expect(page).toHaveURL(url);
-    await expect(page.locator('body')).not.toContainText('Internal Server Error'); await shot(page,'主要画面-'+name);
+    await clickMenuLink(page, name);
+    await expect(page).toHaveURL(url);
+    await expect(page.locator('body')).not.toContainText('Internal Server Error');
+    await shot(page,'主要画面-'+name);
   }
 });
 
