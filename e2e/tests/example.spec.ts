@@ -57,7 +57,7 @@ test('対局カウンターの入力検証が動作する', async ({ page }) => 
   await page.locator('input[name="loginName"]').fill(loginName!);
   await page.locator('input[name="password"]').fill(loginPassword!);
   await page.getByRole('button', { name: 'ログイン' }).click();
-  await expect(page).toHaveURL(/\\/user\\/home$/);
+  await expect(page).toHaveURL(/\/user\/home$/);
 
   await page.goto('user/counter');
 
