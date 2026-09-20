@@ -7,10 +7,10 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>${empty title ? "利用者画面" : title}</title>
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/sidebar.css?v=4" />
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/header.css?v=2" />
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/sidebar.css?v=5" />
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/header.css?v=3" />
   <script defer src="${pageContext.request.contextPath}/js/sidebar.js?v=2"></script>
 </head>
 <body>

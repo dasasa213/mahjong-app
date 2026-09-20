@@ -14,8 +14,8 @@
     .counter-item .counter-btn:first-of-type{grid-area:minus}
     .counter-item .counter-value{grid-area:value}
     .counter-item .counter-btn:last-of-type{grid-area:plus}
-    .counter-value{width:100%;height:46px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;text-align:center;font-size:20px;font-weight:700;color:#111827}
-    .counter-btn{width:44px;height:46px;border:1px solid #94a3b8;border-radius:8px;background:#fff;color:#1f2937;font-size:24px;cursor:pointer;touch-action:manipulation}
+    .counter-value{width:100%;height:46px;padding:0 4px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;text-align:center;font-size:20px;font-weight:700;line-height:46px;color:#111827}
+    .counter-btn{width:44px;height:46px;padding:0;border:1px solid #94a3b8;border-radius:8px;background:#fff;color:#1f2937;font-size:24px;line-height:44px;cursor:pointer;touch-action:manipulation}
     .counter-btn:hover{background:#e8f5e9;border-color:#2e7d32}
     .counter-btn:active{transform:translateY(1px)}
     .counter-btn:focus-visible,.counter-submit:focus-visible,.edit-btn:focus-visible,.delete-btn:focus-visible{outline:3px solid rgba(37,99,235,.24);outline-offset:2px}
