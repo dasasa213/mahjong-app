@@ -1,12 +1,9 @@
 spring:
   datasource:
-    url: jdbc:mysql://mahjongdb.cr2u8q2keo25.ap-southeast-2.rds.amazonaws.com:3306/mahjong
-      ?useSSL=false
-      &allowPublicKeyRetrieval=true
-      &characterEncoding=utf8
-      &serverTimezone=Asia/Tokyo
-    username: admin
-    password: OKB_dikc_0912
+    # ローカルでは mahjong_test、本番では環境変数 DB_URL で mahjong を指定する。
+    url: ${DB_URL:jdbc:mysql://mahjongdb.cr2u8q2keo25.ap-southeast-2.rds.amazonaws.com:3306/mahjong_test?useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=utf8&serverTimezone=Asia/Tokyo}
+    username: ${DB_USERNAME:admin}
+    password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
