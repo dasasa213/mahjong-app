@@ -59,7 +59,10 @@ test('新規対局を作成し、確認後に削除できる', async ({ page }) 
     await page.goto('user/matches/edit');
     const row = page.locator('table.list tbody tr').filter({ hasText: gameId });
     await expect(row).toHaveCount(1);
+    await attach(page, '削除前-作成した対局');
     await row.getByRole('button', { name: '削除' }).click();
+    await expect(page.locator('#delModal')).toBeVisible();
+    await attach(page, 'ポップアップ-作成した対局の削除確認');
     await page.locator('#agreeChk').check();
     await page.getByRole('button', { name: 'OK（削除）' }).click();
     await expect(page.getByText(`ID ${gameId} を削除しました。`)).toBeVisible();
@@ -107,8 +110,10 @@ test('対局カウンターを登録・編集・削除できる', async ({ page 
     await attach(page, '更新系-カウンター編集');
 
     row = page.locator('.history-table tbody tr').filter({ hasText: '9' }).filter({ hasText: '3' });
+    await attach(page, '削除前-カウンター履歴');
     await row.first().getByRole('button', { name: '削除' }).click();
     await expect(page.locator('#deleteConfirmModal')).toBeVisible();
+    await attach(page, 'ポップアップ-カウンター削除確認');
     await page.locator('#deleteConfirmModal').getByRole('button', { name: 'OK' }).click();
     await expect(page.getByText('削除しました。')).toBeVisible();
     cleanupNeeded = false;
