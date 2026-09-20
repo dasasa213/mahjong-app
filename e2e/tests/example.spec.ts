@@ -24,8 +24,8 @@ test('利用者でログインして主要画面を巡回できる', async ({ pa
     'E2E_LOGIN_NAME / E2E_LOGIN_PASSWORD を設定するとログイン後テストを実行します');
 
   await page.goto('main/login-in');
-  await page.getByRole('textbox', { name: 'ユーザ' }).fill(loginName!);
-  await page.getByLabel('パスワード').fill(loginPassword!);
+  await page.locator('input[name="loginName"]').fill(loginName!);
+  await page.locator('input[name="password"]').fill(loginPassword!);
   await page.getByRole('button', { name: 'ログイン' }).click();
 
   await expect(page).toHaveURL(/\/user\/home$/);
