@@ -36,3 +36,25 @@ export async function closeAppModal(page: Page) {
     if (await ok.count()) await ok.click();
   }
 }
+
+/**
+ * PC/モバイル共通のサイドメニュー操作。
+ * モバイル幅ではリンクが画面外にあるため、実ユーザーと同様にメニューボタンを開いてから操作する。
+ */
+export async function clickMenuLink(page: Page, name: string) {
+  const link = page.getByRole('link', { name, exact: true }).first();
+
+  if (!(await link.isVisible().catch(() => false))) {
+    const menuButton = page.getByRole('button', { name: /メニュー|menu/i }).first();
+    if (await menuButton.count()) {
+      await menuButton.click();
+    } else {
+      const fallback = page.locator('button.menu-toggle, .menu-toggle, .hamburger, #menuToggle, [aria-controls*="menu"]').first();
+      await expect(fallback, 'モバイル用メニューボタンが見つかりません').toBeVisible();
+      await fallback.click();
+    }
+  }
+
+  await expect(link, `メニュー「${name}」が表示されません`).toBeVisible();
+  await link.click();
+}
