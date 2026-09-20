@@ -39,7 +39,7 @@ test('利用者でログインして主要メニュー全画面を取得でき�
   await attach(page, '主要画面-利用者ホーム');
 
   const destinations = [
-    ['新規対局', /\/user\/matches\/new$/],
+    ['新規対局', /\/user\/newgame\/date$/],
     ['対局編集', /\/user\/matches\/edit/],
     ['総合成績', /\/user\/overall$/],
     ['総合成績（グラフ）', /\/user\/overall\/chart$/],
