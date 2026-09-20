@@ -74,6 +74,24 @@ npx playwright test
 npx playwright show-report
 ```
 
+### Android / iOS 相当のテスト
+
+Playwrightでは実機そのものではなく、Android Chrome / iOS Safari相当の画面サイズ・User-Agent・タッチ操作をエミュレーションして、既存の全E2Eテストを実行します。
+
+```powershell
+npm run test:android
+npm run test:ios
+npm run test:mobile
+npm run report
+```
+
+- `test:android`: Pixel 5 + Chromium（Android Chrome相当）
+- `test:ios`: iPhone 12 + WebKit（iOS Safari相当）
+- `test:mobile`: Android/iOSを両方実行
+- PCだけ確認する場合は `npm run test:desktop`
+
+モバイルでもPCと同じ機能テスト、入力検証、ポップアップ、更新系を実行します。ただし、Playwrightのエミュレーションだけでは実機固有のソフトウェアキーボード、ブラウザUI、Android/iOS固有の表示差を完全には再現できません。リリース前は下記「PC/スマホ表示」の実機確認も行ってください。
+
 画面を見ながら実行:
 
 ```powershell
