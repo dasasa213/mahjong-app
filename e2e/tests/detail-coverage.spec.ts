@@ -55,10 +55,11 @@ test.describe('利用者・詳細機能',()=>{
 
   test('対局編集の検索・並び順・詳細タブ・行追加を確認',async({page})=>{
     await page.goto('user/matches/edit');
-    const from=page.locator('input[name="from"]'), to=page.locator('input[name="to"]');
-    if(await from.count()) { await from.fill('2020-01-01'); await to.fill('2099-12-31'); }
-    const asc=page.locator('select[name="order"]');
-    if(await asc.count()){ await asc.selectOption('asc'); const submit=page.locator('form').getByRole('button').first(); if(await submit.count()) await submit.click(); }
+    const searchForm=page.locator('#searchForm');
+    const from=searchForm.locator('input[name="from"]'), to=searchForm.locator('input[name="to"]');
+    if(await from.count()) { await from.fill('2020-01-01'); await to.fill('2099-12-31'); await searchForm.getByRole('button',{name:'検索'}).click(); }
+    const orderToggle=searchForm.locator('#orderToggle');
+    if(await orderToggle.count() && await orderToggle.isChecked()){ await orderToggle.uncheck(); await page.waitForLoadState('domcontentloaded'); }
     await shot(page,'対局編集-検索結果');
     const edit=page.getByRole('link',{name:'編集'}).first();
     test.skip(await edit.count()===0,'編集対象データがありません');
@@ -76,9 +77,9 @@ test.describe('利用者・詳細機能',()=>{
     const edit=page.getByRole('link',{name:'編集'}).first();
     test.skip(await edit.count()===0,'編集対象データがありません');
     await edit.click();
-    const row=page.locator('#mt-pane-score tbody tr').first();
-    const inputs=row.locator('input');
-    expect(await inputs.count(),'4人対局データが必要です').toBeGreaterThanOrEqual(4);
+    const row=page.locator('#mt-pane-score table.mt-score tbody tr').first();
+    const inputs=row.locator('td input');
+    await expect(inputs,'4人対局データが必要です').toHaveCount(4);
     for(let i=0;i<4;i++) await inputs.nth(i).fill('');
     await inputs.nth(0).fill('1000');
     await page.getByRole('button',{name:'計算',exact:true}).click();
@@ -108,7 +109,7 @@ test.describe('利用者・詳細機能',()=>{
   });
 
   test('ログアウトして未ログイン保護を確認',async({page})=>{
-    await page.getByRole('button',{name:'ログアウト'}).click();
+    await page.getByRole('link',{name:'ログアウト',exact:true}).click();
     await expect(page).toHaveURL(/\/main\/login/);
     await page.goto('user/home');
     await expect(page).toHaveURL(/\/main\/login/);
