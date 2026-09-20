@@ -59,6 +59,8 @@ test('利用者の全メニュー・遷移画面・カウンターポップア�
     await page.locator('#'+id).evaluate((el: HTMLInputElement,x)=>el.value=x,v);
   await page.getByRole('button',{name:'登録',exact:true}).click();
   await expect(page.locator('#messageModal')).toBeVisible(); await shot(page,'ポップアップ-カウンター入力エラー');
+  await page.locator('#messageModal').getByRole('button',{name:'OK'}).click();
+  await expect(page.locator('#messageModal')).toBeHidden();
 
   const editCounter = page.getByRole('link',{name:'編集'}).first();
   if (await editCounter.count()) { await editCounter.click(); await shot(page,'全画面-カウンター編集'); }
@@ -89,7 +91,7 @@ test('管理者の入力エラー表示を網羅', async ({ page }) => {
   await expect(page.locator('body')).toContainText('パスワードと確認用が一致しません'); await shot(page,'エラー-管理者-アカウント登録');
 
   await page.goto('admin/group/edit');
-  await page.locator('input[name="newName"]').fill('12345678901');
+  await page.locator('input[name="newName"]').evaluate((el: HTMLInputElement) => el.value = '12345678901');
   await page.locator('form').getByRole('button').last().click();
   await expect(page.locator('body')).toContainText('グループ名は10文字以内'); await shot(page,'エラー-管理者-グループ編集');
 });
