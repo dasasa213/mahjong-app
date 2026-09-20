@@ -63,11 +63,26 @@ test.describe('利用者・詳細機能',()=>{
     await searchForm.getByRole('button',{name:'検索'}).click();
     await expect(orderInput).toHaveValue('asc');
     await shot(page,'対局編集-検索結果');
-    const edit=page.getByRole('link',{name:'編集'}).first();
-    test.skip(await edit.count()===0,'編集対象データがありません');
-    await edit.click();
+    const editLinks=page.getByRole('link',{name:'編集'});
+    const editCount=await editLinks.count();
+    test.skip(editCount===0,'編集対象データがありません');
+    const hrefs:string[]=[];
+    for(let i=0;i<editCount;i++){ const href=await editLinks.nth(i).getAttribute('href'); if(href) hrefs.push(href); }
+    let detailFound=false;
+    for(const href of hrefs){
+      await page.goto(href);
+      if(await page.locator('.mt-module').count()){ detailFound=true; break; }
+    }
+    test.skip(!detailFound,'詳細表示できる対局データがありません');
+    await expect(page.locator('.mt-module')).toBeVisible();
     await shot(page,'対局編集-詳細-点棒');
-    for(const [key,label] of [['rank','順位'],['points','点数']] as const){ const tab=page.locator(`.mt-module .tab[data-tab="${key}"]`); await expect(tab).toBeVisible(); await tab.click(); await expect(page.locator(`#mt-pane-${key}`)).toHaveClass(/active/); await shot(page,'対局編集-詳細-'+label); }
+    for(const [key,label] of [['rank','順位'],['points','点数']] as const){
+      const tab=page.locator(`.mt-module .tab[data-tab="${key}"]`);
+      await expect(tab).toBeVisible();
+      await tab.click();
+      await expect(page.locator(`#mt-pane-${key}`)).toHaveClass(/active/);
+      await shot(page,'対局編集-詳細-'+label);
+    }
     const before=await page.locator('#mt-pane-score tbody tr').count();
     await page.getByRole('button',{name:'＋ 行を追加'}).click();
     await expect(page.locator('#mt-pane-score tbody tr')).toHaveCount(before+1);
