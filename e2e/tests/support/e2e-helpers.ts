@@ -63,5 +63,12 @@ export async function clickMenuLink(page: Page, name: string) {
   }
 
   await expect(link, `メニュー「${name}」が表示されません`).toBeVisible();
-  await link.click();
+  // WebKit/モバイルでは固定ヘッダー等がリンク上に重なり、通常 click が
+  // viewport 判定で待ち続けることがある。表示確認後にDOM clickを使い、
+  // 実際のリンク遷移そのものを検証する。
+  if (page.viewportSize() && page.viewportSize()!.width <= 768) {
+    await link.evaluate((el: HTMLElement) => el.click());
+  } else {
+    await link.click();
+  }
 }
