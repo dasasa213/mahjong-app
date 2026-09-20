@@ -49,5 +49,15 @@ test('利用者の全メニュー・遷移画面・カウンターポップア�
   await page.goto('user/counter'); for(const [id,v] of [['handCount','1'],['winCount','2']] as const) await page.locator('#'+id).evaluate((e:HTMLInputElement,x)=>e.value=x,v);
   await page.getByRole('button',{name:'登録',exact:true}).click(); await expect(page.locator('#messageModal')).toBeVisible(); await shot(page,'ポップアップ-カウンター入力エラー');
   await page.locator('#messageModal').getByRole('button',{name:'OK'}).click();
-  const editCounter=page.getByRole('link',{name:'編集'}).first(); if(await editCounter.count()){await editCounter.click(); await shot(page,'全画面-カウンター編集');}
+  const editCounter=page.getByRole('link',{name:'編集'}).first();
+  if(await editCounter.count()){
+    await expect(editCounter).toBeVisible();
+
+    // モバイルでは固定ヘッダー等により通常 click の hit-test が失敗することがある。
+    // 表示済みの実リンク自身をクリックし、編集画面の描画完了を待つ。
+    await editCounter.evaluate((element: HTMLAnchorElement) => element.click());
+    await page.waitForLoadState('domcontentloaded');
+    await expect(page.locator('body')).not.toContainText('Internal Server Error');
+    await shot(page,'全画面-カウンター編集');
+  }
 });
