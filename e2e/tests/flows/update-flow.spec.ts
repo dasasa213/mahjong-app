@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { assertTestDb, login, shot, userName, userPassword } from '../support/e2e-helpers';
 
-test.beforeEach(async ({ page }) => { await assertTestDb(page); await login(page, userName, userPassword, /\\/user\\/home$/); });
+test.beforeEach(async ({ page }) => { await assertTestDb(page); await login(page, userName, userPassword, /\/user\/home$/); });
 
 test('新規対局を作成し、確認後に削除できる', async ({ page }) => {
   let gameId: string | undefined;
