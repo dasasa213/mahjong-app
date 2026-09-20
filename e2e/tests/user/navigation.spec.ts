@@ -34,12 +34,12 @@ test('利用者の全メニュー・遷移画面・カウンターポップア�
     )).toBe(true);
     await expect(edit).toBeVisible();
 
-    // モバイルでは固定ヘッダー等が通常の Playwright click の hit-test を妨げる場合がある。
-    // 横スクロール表を実際に右端まで動かした後、対象リンク自身の DOM click を実行する。
-    await Promise.all([
-      page.waitForURL(/\/user\/matches\/edit\/\d+$/),
-      edit.evaluate((element: HTMLAnchorElement) => element.click())
-    ]);
+    // 実際のリンクをクリックする。遷移先は /user/matches/edit?id=... の形式なので
+    // pathname 固定の正規表現ではなく、クリック後に一覧URLから変化したことを確認する。
+    const beforeEditUrl = page.url();
+    await edit.evaluate((element: HTMLAnchorElement) => element.click());
+    await page.waitForURL(url => url.toString() !== beforeEditUrl);
+    await expect(page).toHaveURL(/\/user\/matches\/edit(?:\?|\/)/);
     await shot(page,'全画面-対局編集詳細');
   }
 
