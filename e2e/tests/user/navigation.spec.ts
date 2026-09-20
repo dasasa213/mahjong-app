@@ -33,7 +33,13 @@ test('利用者の全メニュー・遷移画面・カウンターポップア�
       Math.round(element.scrollLeft + element.clientWidth) >= element.scrollWidth - 1
     )).toBe(true);
     await expect(edit).toBeVisible();
-    await edit.click();
+
+    // モバイルでは固定ヘッダー等が通常の Playwright click の hit-test を妨げる場合がある。
+    // 横スクロール表を実際に右端まで動かした後、対象リンク自身の DOM click を実行する。
+    await Promise.all([
+      page.waitForURL(/\/user\/matches\/edit\/\d+$/),
+      edit.evaluate((element: HTMLAnchorElement) => element.click())
+    ]);
     await shot(page,'全画面-対局編集詳細');
   }
 
