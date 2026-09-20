@@ -42,9 +42,9 @@ test('利用者でログインして主要画面を巡回できる', async ({ pa
     await page.getByRole('link', { name, exact: true }).click();
     await expect(page).toHaveURL(url);
     await expect(page.locator('body')).not.toContainText('Internal Server Error');
-    await page.screenshot({
-      path: `screenshots/chromium-${name.replace(/[（）]/g, '').replace(/[^\\p{L}\\p{N}]+/gu, '-')}.png`,
-      fullPage: true,
+    await test.info().attach(`${name}.png`, {
+      body: await page.screenshot({ fullPage: true }),
+      contentType: 'image/png',
     });
   }
 });
@@ -69,5 +69,8 @@ test('対局カウンターの入力検証が動作する', async ({ page }) => 
   await expect(page.locator('#messageModal')).toBeVisible();
   await expect(page.locator('#messageModalText'))
     .toHaveText('和了数は局数以下にしてください。');
-  await page.screenshot({ path: 'screenshots/chromium-counter-validation.png', fullPage: true });
+  await test.info().attach('対局カウンター-入力検証.png', {
+    body: await page.screenshot({ fullPage: true }),
+    contentType: 'image/png',
+  });
 });
