@@ -5,7 +5,7 @@
 <head>
 <meta charset="UTF-8" />
 <title>ログイン</title>
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <style>
   *{box-sizing:border-box}
   html,body{min-height:100%;margin:0}
