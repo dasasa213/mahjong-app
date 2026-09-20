@@ -1,8 +1,9 @@
 spring:
   datasource:
-    # ローカルでは mahjong_test、本番では環境変数 DB_URL で mahjong を指定する。
+    # ローカルではテストDB専用ユーザーを使用する。
+    # 本番では DB_URL / DB_USERNAME / DB_PASSWORD を環境変数で明示する。
     url: ${DB_URL:jdbc:mysql://mahjongdb.cr2u8q2keo25.ap-southeast-2.rds.amazonaws.com:3306/mahjong_test?useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=utf8&serverTimezone=Asia/Tokyo}
-    username: ${DB_USERNAME:admin}
+    username: ${DB_USERNAME:mahjong_test_user}
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
