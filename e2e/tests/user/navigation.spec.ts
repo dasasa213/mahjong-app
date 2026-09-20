@@ -22,17 +22,16 @@ test('利用者の全メニュー・遷移画面・カウンターポップア�
   await page.goto('user/matches/edit');
   const edit=page.getByRole('link',{name:'編集'}).first();
   if(await edit.count()){
-    await edit.evaluate((element) => {
-      let current: HTMLElement | null = element as HTMLElement;
-      while (current) {
-        if (current.scrollWidth > current.clientWidth) {
-          current.scrollLeft = current.scrollWidth;
-          break;
-        }
-        current = current.parentElement;
-      }
+    // 編集ボタンは横スクロール表 (.list-wrap) の右端にある。
+    // ページ全体ではなく表のスクロール領域を明示的に右端へ移動してから押す。
+    const listWrap = page.locator('.list-wrap');
+    await expect(listWrap).toBeVisible();
+    await listWrap.evaluate((element: HTMLElement) => {
+      element.scrollLeft = element.scrollWidth - element.clientWidth;
     });
-    await edit.scrollIntoViewIfNeeded();
+    await expect.poll(() => listWrap.evaluate((element: HTMLElement) =>
+      Math.round(element.scrollLeft + element.clientWidth) >= element.scrollWidth - 1
+    )).toBe(true);
     await expect(edit).toBeVisible();
     await edit.click();
     await shot(page,'全画面-対局編集詳細');
