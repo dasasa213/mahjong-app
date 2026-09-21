@@ -1,12 +1,17 @@
 {
   "name": "e2e",
   "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {},
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
+  "private": true,
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "report": "playwright show-report",
+    "test:desktop": "playwright test --project=chromium",
+    "test:android": "playwright test --project=android-chrome",
+    "test:ios": "playwright test --project=ios-safari",
+    "test:mobile": "playwright test --project=android-chrome --project=ios-safari"
+  },
   "devDependencies": {
     "@playwright/test": "^1.63.0",
     "@types/node": "^26.6.2"

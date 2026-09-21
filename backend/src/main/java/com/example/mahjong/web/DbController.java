@@ -17,9 +17,19 @@ public class DbController {
 
     @GetMapping("/db/ping")
     public Map<String, String> ping() {
-        // 接続できれば例外にならずOK
         Integer one = jdbc.queryForObject("SELECT 1", Integer.class);
         return Map.of("status", "db: ok", "select1", String.valueOf(one));
+    }
+
+    @GetMapping("/db/info")
+    public Map<String, String> info() {
+        return jdbc.queryForObject(
+                "SELECT DATABASE() db, CURRENT_USER() dbUser",
+                (rs, rowNum) -> Map.of(
+                        "database", rs.getString("db"),
+                        "user", rs.getString("dbUser")
+                )
+        );
     }
 
     @GetMapping("/db/version")
