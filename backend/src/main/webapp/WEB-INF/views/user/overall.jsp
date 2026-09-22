@@ -8,6 +8,13 @@
     .overall-card{background:#fff;border:1px solid #dfe3e8;border-radius:12px;overflow:hidden}
     .overall-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-bottom:1px solid #e5e7eb}
     .overall-heading h2{margin:0;font-size:1.05rem}
+    .overall-periods{display:flex;flex-wrap:wrap;gap:8px;padding:12px 16px 0}
+    .overall-period{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border:1px solid #cbd5e1;border-radius:8px;color:#334155;text-decoration:none;font-weight:700;background:#fff}
+    .overall-period:hover{background:#f1f5f9}
+    .overall-period[aria-current="page"]{background:#2e7d32;border-color:#2e7d32;color:#fff}
+    .overall-period:focus-visible{outline:3px solid #1565c0;outline-offset:3px}
+    .period-description{margin:10px 16px 14px;color:#475569;font-size:13px;line-height:1.6}
+    .period-description p{margin:4px 0}
     .swipe-hint{display:none;color:#64748b;font-size:12px;text-align:right}
     .overall-wrap{width:100%;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;max-height:calc(100vh - 150px)}
     .overall-table{width:100%;min-width:860px;border-collapse:separate;border-spacing:0}
@@ -44,7 +51,28 @@
       <h2 id="overall-title">グループ成績一覧</h2>
       <span class="swipe-hint">横にスワイプして他のユーザーを表示できます</span>
     </div>
-    <div class="overall-wrap" tabindex="0">
+    <c:url var="allUrl" value="/user/overall"><c:param name="period" value="all" /></c:url>
+    <c:url var="recentUrl" value="/user/overall"><c:param name="period" value="recent100" /></c:url>
+    <c:url var="yearUrl" value="/user/overall"><c:param name="period" value="year" /></c:url>
+    <nav class="overall-periods" aria-label="総合成績の集計期間">
+      <a class="overall-period" href="${allUrl}" aria-current="${period == 'all' ? 'page' : 'false'}">通算</a>
+      <a class="overall-period" href="${recentUrl}" aria-current="${period == 'recent100' ? 'page' : 'false'}">直近100半荘</a>
+      <a class="overall-period" href="${yearUrl}" aria-current="${period == 'year' ? 'page' : 'false'}">今年（${currentYear}年）</a>
+    </nav>
+    <div id="period-description" class="period-description">
+      <c:choose>
+        <c:when test="${period == 'recent100'}">
+          <p>各プレイヤーが参加した直近100半荘を集計します。100半荘未満の場合は全半荘が対象です。</p>
+          <p>局数・和了率・副露率・立直率・放銃率は日単位の記録のため、直近100半荘では「—」と表示します。</p>
+        </c:when>
+        <c:when test="${period == 'year'}">
+          <p>${currentYear}年1月1日〜12月31日の成績です。年の切り替えは日本時間を基準にします。</p>
+        </c:when>
+        <c:otherwise><p>これまでのすべての成績です。</p></c:otherwise>
+      </c:choose>
+      <p>参加日数は対象の半荘をプレイした日数です。対局のない期間の平均順位・順位率は「—」と表示します。</p>
+    </div>
+    <div class="overall-wrap" tabindex="0" aria-describedby="period-description">
     <table class="overall-table">
       <thead>
         <tr>
@@ -82,27 +110,39 @@
           <td class="metric-name">平均順位</td>
           <c:forEach var="name" items="${userNames}">
             <td>
-              <fmt:formatNumber value="${byUser[name].avgRank}" maxFractionDigits="2" minFractionDigits="2" />
+              <c:choose>
+                <c:when test="${byUser[name].hanshanCount > 0}"><fmt:formatNumber value="${byUser[name].avgRank}" maxFractionDigits="2" minFractionDigits="2" /></c:when>
+                <c:otherwise>—</c:otherwise>
+              </c:choose>
             </td>
           </c:forEach>
         </tr>
 
+        <c:if test="${period == 'all'}">
         <!-- 直近100半荘の平均順位（小さいほど良いので色付けはしない） -->
         <tr>
           <td class="metric-name">直近100戦平均</td>
           <c:forEach var="name" items="${userNames}">
             <td>
-              <fmt:formatNumber value="${byUser[name].recent100AvgRank}" maxFractionDigits="2" minFractionDigits="2" />
+              <c:choose>
+                <c:when test="${byUser[name].hanshanCount > 0}"><fmt:formatNumber value="${byUser[name].recent100AvgRank}" maxFractionDigits="2" minFractionDigits="2" /></c:when>
+                <c:otherwise>—</c:otherwise>
+              </c:choose>
             </td>
           </c:forEach>
         </tr>
+
+        </c:if>
 
         <!-- 1位率〜4位率 -->
         <tr>
           <td class="metric-name">1位率</td>
           <c:forEach var="name" items="${userNames}">
             <td>
-              <fmt:formatNumber value="${byUser[name].rate1}" maxFractionDigits="2" minFractionDigits="2" />%
+              <c:choose>
+                <c:when test="${byUser[name].hanshanCount > 0}"><fmt:formatNumber value="${byUser[name].rate1}" maxFractionDigits="2" minFractionDigits="2" />%</c:when>
+                <c:otherwise>—</c:otherwise>
+              </c:choose>
             </td>
           </c:forEach>
         </tr>
@@ -110,7 +150,10 @@
           <td class="metric-name">2位率</td>
           <c:forEach var="name" items="${userNames}">
             <td>
-              <fmt:formatNumber value="${byUser[name].rate2}" maxFractionDigits="2" minFractionDigits="2" />%
+              <c:choose>
+                <c:when test="${byUser[name].hanshanCount > 0}"><fmt:formatNumber value="${byUser[name].rate2}" maxFractionDigits="2" minFractionDigits="2" />%</c:when>
+                <c:otherwise>—</c:otherwise>
+              </c:choose>
             </td>
           </c:forEach>
         </tr>
@@ -118,7 +161,10 @@
           <td class="metric-name">3位率</td>
           <c:forEach var="name" items="${userNames}">
             <td>
-              <fmt:formatNumber value="${byUser[name].rate3}" maxFractionDigits="2" minFractionDigits="2" />%
+              <c:choose>
+                <c:when test="${byUser[name].hanshanCount > 0}"><fmt:formatNumber value="${byUser[name].rate3}" maxFractionDigits="2" minFractionDigits="2" />%</c:when>
+                <c:otherwise>—</c:otherwise>
+              </c:choose>
             </td>
           </c:forEach>
         </tr>
@@ -126,7 +172,10 @@
           <td class="metric-name">4位率</td>
           <c:forEach var="name" items="${userNames}">
             <td>
-              <fmt:formatNumber value="${byUser[name].rate4}" maxFractionDigits="2" minFractionDigits="2" />%
+              <c:choose>
+                <c:when test="${byUser[name].hanshanCount > 0}"><fmt:formatNumber value="${byUser[name].rate4}" maxFractionDigits="2" minFractionDigits="2" />%</c:when>
+                <c:otherwise>—</c:otherwise>
+              </c:choose>
             </td>
           </c:forEach>
         </tr>
@@ -150,9 +199,14 @@
           <td class="metric-name">局数</td>
           <c:forEach var="name" items="${userNames}">
             <td>
-              <fmt:formatNumber
+              <c:choose>
+                <c:when test="${counterStatsAvailable}">
+                  <fmt:formatNumber
                   value="${byUser[name].handCount}"
                   pattern="#,##0" />
+                </c:when>
+                <c:otherwise>—</c:otherwise>
+              </c:choose>
             </td>
           </c:forEach>
         </tr>
@@ -161,10 +215,15 @@
           <td class="metric-name">和了率</td>
           <c:forEach var="name" items="${userNames}">
             <td>
-              <fmt:formatNumber
+              <c:choose>
+                <c:when test="${counterStatsAvailable and byUser[name].handCount > 0}">
+                  <fmt:formatNumber
                   value="${byUser[name].winRate}"
                   maxFractionDigits="2"
                   minFractionDigits="2" />%
+                </c:when>
+                <c:otherwise>—</c:otherwise>
+              </c:choose>
             </td>
           </c:forEach>
         </tr>
@@ -173,10 +232,15 @@
           <td class="metric-name">副露率</td>
           <c:forEach var="name" items="${userNames}">
             <td>
-              <fmt:formatNumber
+              <c:choose>
+                <c:when test="${counterStatsAvailable and byUser[name].handCount > 0}">
+                  <fmt:formatNumber
                   value="${byUser[name].callRate}"
                   maxFractionDigits="2"
                   minFractionDigits="2" />%
+                </c:when>
+                <c:otherwise>—</c:otherwise>
+              </c:choose>
             </td>
           </c:forEach>
         </tr>
@@ -185,10 +249,15 @@
           <td class="metric-name">立直率</td>
           <c:forEach var="name" items="${userNames}">
             <td>
-              <fmt:formatNumber
+              <c:choose>
+                <c:when test="${counterStatsAvailable and byUser[name].handCount > 0}">
+                  <fmt:formatNumber
                   value="${byUser[name].riichiRate}"
                   maxFractionDigits="2"
                   minFractionDigits="2" />%
+                </c:when>
+                <c:otherwise>—</c:otherwise>
+              </c:choose>
             </td>
           </c:forEach>
         </tr>
@@ -197,10 +266,15 @@
           <td class="metric-name">放銃率</td>
           <c:forEach var="name" items="${userNames}">
             <td>
-              <fmt:formatNumber
+              <c:choose>
+                <c:when test="${counterStatsAvailable and byUser[name].handCount > 0}">
+                  <fmt:formatNumber
                   value="${byUser[name].dealInRate}"
                   maxFractionDigits="2"
                   minFractionDigits="2" />%
+                </c:when>
+                <c:otherwise>—</c:otherwise>
+              </c:choose>
             </td>
           </c:forEach>
         </tr>

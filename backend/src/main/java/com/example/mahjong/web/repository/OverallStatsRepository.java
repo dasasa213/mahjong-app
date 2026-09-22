@@ -1,12 +1,16 @@
 package com.example.mahjong.web.repository;
 
 import com.example.mahjong.web.model.OverallStats;
+import com.example.mahjong.web.model.OverallPeriod;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,88 +25,90 @@ public class OverallStatsRepository {
     }
 
     public List<OverallStats> findByGroupId(long groupId) {
-        String sql = """
-                SELECT
-                  u.name                                  AS user_name,
-                  COALESCE(p.total_point,   0)            AS total_point,
-                  COALESCE(p.total_amount,  0)            AS total_amount,
-                  COALESCE(r.avg_rank,      0)            AS avg_rank,
-                  COALESCE(r100.avg_rank,   0)            AS recent100_avg_rank,
-                  COALESCE(r.rate1,         0)            AS rate1,
-                  COALESCE(r.rate2,         0)            AS rate2,
-                  COALESCE(r.rate3,         0)            AS rate3,
-                  COALESCE(r.rate4,         0)            AS rate4,
-                  COALESCE(gp.play_count,   0)            AS participate_days,
-                  COALESCE(pt.hanshan_cnt,  0)            AS hanshan_count,
-                  COALESCE(gc.hand_count,   0)            AS hand_count,
-                  COALESCE(gc.win_rate,     0)            AS win_rate,
-                  COALESCE(gc.call_rate,    0)            AS call_rate,
-                  COALESCE(gc.riichi_rate,  0)            AS riichi_rate,
-                  COALESCE(gc.deal_in_rate, 0)            AS deal_in_rate
-                FROM daa_user_knr u
-                LEFT JOIN (
-                  SELECT
-                    p.name,
-                    SUM(p.point)             AS total_point,
-                    SUM(p.point * g.rate)    AS total_amount
-                  FROM daa_point p
-                  JOIN daa_gamerecords g ON g.id = p.game_id
-                  GROUP BY p.name
-                ) p ON p.name = u.name
-                LEFT JOIN (
-                  SELECT
-                    r.name,
-                    AVG(r.rank_no) AS avg_rank,
-                    100.0 * SUM(CASE WHEN r.rank_no = 1 THEN 1 ELSE 0 END) / NULLIF(COUNT(*),0) AS rate1,
-                    100.0 * SUM(CASE WHEN r.rank_no = 2 THEN 1 ELSE 0 END) / NULLIF(COUNT(*),0) AS rate2,
-                    100.0 * SUM(CASE WHEN r.rank_no = 3 THEN 1 ELSE 0 END) / NULLIF(COUNT(*),0) AS rate3,
-                    100.0 * SUM(CASE WHEN r.rank_no = 4 THEN 1 ELSE 0 END) / NULLIF(COUNT(*),0) AS rate4
-                  FROM daa_ranking r
-                  GROUP BY r.name
-                ) r ON r.name = u.name
-                LEFT JOIN (
-                  SELECT name, AVG(rank_no) AS avg_rank
-                  FROM (
-                    SELECT
-                      r.name,
-                      r.rank_no,
-                      ROW_NUMBER() OVER (
-                        PARTITION BY r.name
-                        ORDER BY g.gamedate DESC, g.gameno DESC, r.row_no DESC, r.ranking_id DESC
-                      ) AS rn
-                    FROM daa_ranking r
-                    JOIN daa_gamerecords g ON g.id = r.game_id
-                    WHERE g.groupid = ?
-                  ) recent_rank
-                  WHERE rn <= 100
-                  GROUP BY name
-                ) r100 ON r100.name = u.name
-                LEFT JOIN (
-                  SELECT gp.user_name, COUNT(*) AS play_count
-                  FROM daa_gameplayers gp
-                  GROUP BY gp.user_name
-                ) gp ON gp.user_name = u.name
-                LEFT JOIN (
-                  SELECT name, COUNT(*) AS hanshan_cnt
-                  FROM daa_point
-                  GROUP BY name
-                ) pt ON pt.name = u.name
-                LEFT JOIN (
-                  SELECT
-                    user_id,
-                    SUM(hand_count) AS hand_count,
-                    100.0 * SUM(win_count) / NULLIF(SUM(hand_count), 0) AS win_rate,
-                    100.0 * SUM(call_count) / NULLIF(SUM(hand_count), 0) AS call_rate,
-                    100.0 * SUM(riichi_count) / NULLIF(SUM(hand_count), 0) AS riichi_rate,
-                    100.0 * SUM(deal_in_count) / NULLIF(SUM(hand_count), 0) AS deal_in_rate
-                  FROM daa_game_counter GROUP BY user_id
-                ) gc ON gc.user_id = u.id
-                WHERE u.groupid = ?
-                  AND u.type = '2'
-                ORDER BY u.id;
-            """;
+        return findByGroupId(groupId, OverallPeriod.ALL,
+                LocalDate.now(ZoneId.of("Asia/Tokyo")).getYear());
+    }
 
-        return jdbc.query(sql, (rs, rowNum) -> map(rs), groupId, groupId);
+    public List<OverallStats> findByGroupId(long groupId, OverallPeriod period, int year) {
+        int yearOnly = period == OverallPeriod.YEAR ? 1 : 0;
+        int recentOnly = period == OverallPeriod.RECENT100 ? 1 : 0;
+        Date yearStart = Date.valueOf(LocalDate.of(year, 1, 1));
+        Date yearEnd = Date.valueOf(LocalDate.of(year + 1, 1, 1));
+
+        // 点数・順位・半荘数は同じ半荘集合から集計する。
+        // カウンターは日単位のため、直近100半荘では集計せず画面に「—」を表示する。
+        String sql = """
+                WITH period_games AS (
+                  SELECT id, gamedate, gameno, rate
+                  FROM daa_gamerecords
+                  WHERE groupid = ?
+                    AND (? = 0 OR (gamedate >= ? AND gamedate < ?))
+                ), ranked_hands AS (
+                  SELECT p.name, p.point, g.rate, g.gamedate, r.rank_no,
+                    ROW_NUMBER() OVER (
+                      PARTITION BY p.name
+                      ORDER BY g.gamedate DESC, g.gameno DESC, p.row_no DESC, p.point_id DESC
+                    ) AS rn
+                  FROM daa_point p
+                  JOIN period_games g ON g.id = p.game_id
+                  LEFT JOIN daa_ranking r
+                    ON r.game_id = p.game_id AND r.row_no = p.row_no AND r.name = p.name
+                ), selected_hands AS (
+                  SELECT * FROM ranked_hands WHERE ? = 0 OR rn <= 100
+                ), hand_stats AS (
+                  SELECT name,
+                    SUM(point) AS total_point,
+                    SUM(point * rate) AS total_amount,
+                    AVG(rank_no) AS avg_rank,
+                    AVG(CASE WHEN rn <= 100 THEN rank_no END) AS recent100_avg_rank,
+                    100.0 * SUM(CASE WHEN rank_no = 1 THEN 1 ELSE 0 END) / NULLIF(COUNT(rank_no), 0) AS rate1,
+                    100.0 * SUM(CASE WHEN rank_no = 2 THEN 1 ELSE 0 END) / NULLIF(COUNT(rank_no), 0) AS rate2,
+                    100.0 * SUM(CASE WHEN rank_no = 3 THEN 1 ELSE 0 END) / NULLIF(COUNT(rank_no), 0) AS rate3,
+                    100.0 * SUM(CASE WHEN rank_no = 4 THEN 1 ELSE 0 END) / NULLIF(COUNT(rank_no), 0) AS rate4,
+                    COUNT(DISTINCT gamedate) AS participate_days,
+                    COUNT(*) AS hanshan_count
+                  FROM selected_hands
+                  GROUP BY name
+                ), counter_stats AS (
+                  SELECT gc.user_id,
+                    SUM(gc.hand_count) AS hand_count,
+                    100.0 * SUM(gc.win_count) / NULLIF(SUM(gc.hand_count), 0) AS win_rate,
+                    100.0 * SUM(gc.call_count) / NULLIF(SUM(gc.hand_count), 0) AS call_rate,
+                    100.0 * SUM(gc.riichi_count) / NULLIF(SUM(gc.hand_count), 0) AS riichi_rate,
+                    100.0 * SUM(gc.deal_in_count) / NULLIF(SUM(gc.hand_count), 0) AS deal_in_rate
+                  FROM daa_game_counter gc
+                  JOIN daa_user_knr cu ON cu.id = gc.user_id
+                  WHERE cu.groupid = ? AND cu.type = '2' AND ? = 0
+                    AND (? = 0 OR (gc.game_date >= ? AND gc.game_date < ?))
+                  GROUP BY gc.user_id
+                )
+                SELECT
+                  u.name AS user_name,
+                  COALESCE(h.total_point, 0) AS total_point,
+                  COALESCE(h.total_amount, 0) AS total_amount,
+                  COALESCE(h.avg_rank, 0) AS avg_rank,
+                  COALESCE(h.recent100_avg_rank, 0) AS recent100_avg_rank,
+                  COALESCE(h.rate1, 0) AS rate1,
+                  COALESCE(h.rate2, 0) AS rate2,
+                  COALESCE(h.rate3, 0) AS rate3,
+                  COALESCE(h.rate4, 0) AS rate4,
+                  COALESCE(h.participate_days, 0) AS participate_days,
+                  COALESCE(h.hanshan_count, 0) AS hanshan_count,
+                  COALESCE(gc.hand_count, 0) AS hand_count,
+                  COALESCE(gc.win_rate, 0) AS win_rate,
+                  COALESCE(gc.call_rate, 0) AS call_rate,
+                  COALESCE(gc.riichi_rate, 0) AS riichi_rate,
+                  COALESCE(gc.deal_in_rate, 0) AS deal_in_rate
+                FROM daa_user_knr u
+                LEFT JOIN hand_stats h ON h.name = u.name
+                LEFT JOIN counter_stats gc ON gc.user_id = u.id
+                WHERE u.groupid = ? AND u.type = '2'
+                ORDER BY u.id
+                """;
+
+        return jdbc.query(sql, (rs, rowNum) -> map(rs),
+                groupId, yearOnly, yearStart, yearEnd, recentOnly,
+                groupId, recentOnly, yearOnly, yearStart, yearEnd, groupId);
     }
 
     private OverallStats map(ResultSet rs) throws SQLException {

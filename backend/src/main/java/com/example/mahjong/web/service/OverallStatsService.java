@@ -1,6 +1,7 @@
 package com.example.mahjong.web.service;
 
 import com.example.mahjong.web.model.OverallStats;
+import com.example.mahjong.web.model.OverallPeriod;
 import com.example.mahjong.web.repository.OverallStatsRepository;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,10 @@ public class OverallStatsService {
 
     public List<OverallStats> list(long groupId) {
         return repo.findByGroupId(groupId);
+    }
+
+    public List<OverallStats> list(long groupId, OverallPeriod period, int year) {
+        return repo.findByGroupId(groupId, period, year);
     }
 
     public void hensa(OverallStats overallStats) {

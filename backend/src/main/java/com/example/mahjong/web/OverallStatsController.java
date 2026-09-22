@@ -1,12 +1,17 @@
 package com.example.mahjong.web.user;
 
 import com.example.mahjong.web.model.OverallStats;
+import com.example.mahjong.web.model.OverallPeriod;
 import com.example.mahjong.web.service.OverallStatsService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.time.Year;
+import java.time.ZoneId;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -23,11 +28,14 @@ public class OverallStatsController {
     }
 
     @GetMapping
-    public String page(HttpSession session, Model model) {
+    public String page(HttpSession session, Model model,
+                       @RequestParam(name = "period", defaultValue = "all") String periodValue) {
         Object gid = session.getAttribute("groupId");
         long groupId = (gid instanceof Number) ? ((Number) gid).longValue() : Long.parseLong(String.valueOf(gid));
 
-        List<OverallStats> rows = service.list(groupId);
+        OverallPeriod period = OverallPeriod.fromValue(periodValue);
+        int currentYear = Year.now(ZoneId.of("Asia/Tokyo")).getValue();
+        List<OverallStats> rows = service.list(groupId, period, currentYear);
 
         // JSPで「行：指標／列：ユーザー名」にしたいので、ピボット用のMapを作る
         // keys: userName（列見出し）
@@ -37,11 +45,9 @@ public class OverallStatsController {
             byUser.put(r.getUserName(), r);
         }
 
-        for (Map.Entry<String, OverallStats> entry : byUser.entrySet()) {
-            OverallStats stats = entry.getValue();
-            service.hensa(stats);
-        }
-
+        model.addAttribute("period", period.getValue());
+        model.addAttribute("currentYear", currentYear);
+        model.addAttribute("counterStatsAvailable", period != OverallPeriod.RECENT100);
         model.addAttribute("byUser", byUser);
         model.addAttribute("userNames", byUser.keySet()); // 列順管理
         model.addAttribute("active", "overall");          // サイドメニュー選択用（必要なら）
