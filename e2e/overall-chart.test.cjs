@@ -27,14 +27,17 @@ function data(count, metric = 'avgRank') {
   return {metric, labels: Array.from({length: count}, (_,i) => String(i+1)), series: Array(count).fill(2.5), movingAverages};
 }
 const response = value => ({ok: true, json: async () => value});
-for (const [count, expected] of [[0,1],[24,1],[25,2],[49,2],[50,3],[99,3],[100,4]]) {
+for (const [count, expected] of [[0,0],[24,0],[25,1],[49,1],[50,2],[99,2],[100,3]]) {
   test(`only available windows are drawn after ${count} games`, async () => {
     const app = setup(async () => response(data(count)));
     await flush();
     assert.equal(app.errors.length, 0);
     const cfg = app.configs[0];
     assert.equal(cfg.data.datasets.length, expected);
-    for (const ds of cfg.data.datasets.slice(1)) {
+    assert.equal(cfg.data.datasets.some(ds => ds.label === '累積：平均順位'), false);
+    assert.equal(cfg.options.scales.y.min, 1.5);
+    assert.equal(cfg.options.scales.y.max, 3.5);
+    for (const ds of cfg.data.datasets) {
       const window = Number(ds.label.match(/\d+/)[0]);
       assert.equal(ds.data.slice(0,window-1).every(x => x === null), true);
       assert.equal(ds.spanGaps, false);

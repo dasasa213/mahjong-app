@@ -24,7 +24,7 @@
         <select id="metricSelect" class="input">
           <option value="point" ${defaultMetric == 'point' ? 'selected' : ''}>合計点数（累積）</option>
           <option value="amount" ${defaultMetric == 'amount' ? 'selected' : ''}>合計金額（累積）</option>
-          <option value="avgRank" ${defaultMetric == 'avgRank' ? 'selected' : ''}>平均順位（累積・移動平均）</option>
+          <option value="avgRank" ${defaultMetric == 'avgRank' ? 'selected' : ''}>平均順位（移動平均）</option>
         </select>
       </label>
 
@@ -61,7 +61,7 @@
           beginAtZero: !isAvg,
           title: { display: true, text: isAvg ? '平均順位' : (metric === 'amount' ? '金額' : '点数') }
         };
-        if(isAvg){ y.min = 1; y.max = 4; }
+        if(isAvg){ y.min = 1.5; y.max = 3.5; }
         return {
           responsive: true,
           maintainAspectRatio: false,
@@ -86,12 +86,18 @@
           const data = await res.json();
           if (request !== requestNumber) return;
           document.getElementById('rankHint').hidden = data.metric !== 'avgRank';
-          const datasets = [{
+          const cumulativeDataset = {
             label: seriesLabel(data.metric), data: data.series || [],
             tension: data.metric === 'avgRank' ? 0 : .25, pointRadius: 2, pointHitRadius: 12, borderWidth: 2,
             borderColor: '#2e7d32', backgroundColor: 'rgba(46,125,50,.12)'
-          }];
+          };
+          const datasets = [];
+          if (data.metric !== 'avgRank') {
+            datasets.push(cumulativeDataset);
+          }
           if (data.metric === 'avgRank') {
+            // 累積平均順位は非表示。再表示する場合は次の行のコメントを解除する。
+            // datasets.push(cumulativeDataset);
             const styles = [
               { window: 25, color: '#2563eb', dash: [] },
               { window: 50, color: '#d97706', dash: [6, 3] },
