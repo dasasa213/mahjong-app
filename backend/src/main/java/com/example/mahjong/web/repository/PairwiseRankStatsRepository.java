@@ -5,6 +5,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
@@ -14,6 +16,14 @@ public class PairwiseRankStatsRepository {
 
     public PairwiseRankStatsRepository(JdbcTemplate jdbc) {
         this.jdbc = jdbc;
+    }
+
+    public List<Integer> findYears(long groupId) {
+        return jdbc.query("""
+                SELECT DISTINCT YEAR(gamedate) AS game_year
+                FROM daa_gamerecords WHERE groupid = ?
+                ORDER BY game_year DESC
+                """, (rs, rowNum) -> rs.getInt("game_year"), groupId);
     }
 
     public List<String> findUserNames(long groupId) {
@@ -28,6 +38,13 @@ public class PairwiseRankStatsRepository {
     }
 
     public List<PairwiseRankDiffRow> findRankDiffRows(long groupId) {
+        return findRankDiffRows(groupId, null);
+    }
+
+    public List<PairwiseRankDiffRow> findRankDiffRows(long groupId, Integer year) {
+        int baseYear = year == null ? 2000 : year;
+        Date start = Date.valueOf(LocalDate.of(baseYear, 1, 1));
+        Date end = Date.valueOf(LocalDate.of(baseYear + 1, 1, 1));
         String sql = """
                 SELECT
                   r1.name AS row_user_name,
@@ -37,6 +54,7 @@ public class PairwiseRankStatsRepository {
                 FROM daa_ranking r1
                 JOIN daa_ranking r2
                   ON r1.game_id = r2.game_id
+                 AND r1.row_no = r2.row_no
                  AND r1.name <> r2.name
                 JOIN daa_gamerecords g
                   ON g.id = r1.game_id
@@ -49,6 +67,7 @@ public class PairwiseRankStatsRepository {
                  AND u2.groupid = ?
                  AND u2.type = '2'
                 WHERE g.groupid = ?
+                  AND (? = 0 OR (g.gamedate >= ? AND g.gamedate < ?))
                 GROUP BY r1.name, r2.name
                 """;
 
@@ -60,6 +79,6 @@ public class PairwiseRankStatsRepository {
             row.setRankDiff(diff == null ? BigDecimal.ZERO : diff);
             row.setGameCount(rs.getLong("game_count"));
             return row;
-        }, groupId, groupId, groupId);
+        }, groupId, groupId, groupId, year == null ? 0 : 1, start, end);
     }
 }

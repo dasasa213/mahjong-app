@@ -24,6 +24,14 @@ public class OverallStatsRepository {
         this.jdbc = jdbc;
     }
 
+    public List<Integer> findYears(long groupId) {
+        return jdbc.query("""
+                SELECT DISTINCT YEAR(gamedate) AS game_year
+                FROM daa_gamerecords WHERE groupid = ?
+                ORDER BY game_year DESC
+                """, (rs, rowNum) -> rs.getInt("game_year"), groupId);
+    }
+
     public List<OverallStats> findByGroupId(long groupId) {
         return findByGroupId(groupId, OverallPeriod.ALL,
                 LocalDate.now(ZoneId.of("Asia/Tokyo")).getYear());

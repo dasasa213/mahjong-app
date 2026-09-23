@@ -18,6 +18,10 @@ public class OverallStatsService {
         this.repo = repo;
     }
 
+    public List<Integer> years(long groupId) {
+        return repo.findYears(groupId);
+    }
+
     public List<OverallStats> list(long groupId) {
         return repo.findByGroupId(groupId);
     }

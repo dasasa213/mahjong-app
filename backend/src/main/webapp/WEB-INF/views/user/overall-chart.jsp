@@ -24,13 +24,14 @@
         <select id="metricSelect" class="input">
           <option value="point" ${defaultMetric == 'point' ? 'selected' : ''}>合計点数（累積）</option>
           <option value="amount" ${defaultMetric == 'amount' ? 'selected' : ''}>合計金額（累積）</option>
-          <option value="avgRank" ${defaultMetric == 'avgRank' ? 'selected' : ''}>平均順位（累積）</option>
+          <option value="avgRank" ${defaultMetric == 'avgRank' ? 'selected' : ''}>平均順位（累積・移動平均）</option>
         </select>
       </label>
 
       <button id="reloadBtn" class="btn primary" type="button">更新</button>
     </div>
 
+    <p id="rankHint" class="rank-hint" hidden>平均順位は半荘ごとに表示します。25・50・100半荘の移動平均線は、それぞれ必要な半荘数に達してから表示します。凡例を押すと線の表示を切り替えられます。</p>
     <div class="chart-area">
       <canvas id="overallChart"></canvas>
     </div>
@@ -44,6 +45,7 @@
       const $btn = document.getElementById('reloadBtn');
       const ctx = document.getElementById('overallChart').getContext('2d');
       let chart;
+      let requestNumber = 0;
 
       function seriesLabel(metric){
         switch(metric){
@@ -65,7 +67,7 @@
           maintainAspectRatio: false,
           interaction: { mode: 'index', intersect: false },
           scales: {
-            x: { title: { display: true, text: '対局日' } },
+            x: { title: { display: true, text: isAvg ? '対局日・通算半荘数' : '対局日' } },
             y
           },
           plugins: { legend: { display: true, labels: { usePointStyle: true } } }
@@ -73,6 +75,7 @@
       }
 
       async function loadAndRender(){
+        const request = ++requestNumber;
         $btn.disabled = true;
         $btn.textContent = '読込中…';
         try {
@@ -81,30 +84,47 @@
                                   { headers: { 'Accept': 'application/json' }});
           if(!res.ok) throw new Error('グラフデータを取得できませんでした');
           const data = await res.json();
+          if (request !== requestNumber) return;
+          document.getElementById('rankHint').hidden = data.metric !== 'avgRank';
+          const datasets = [{
+            label: seriesLabel(data.metric), data: data.series || [],
+            tension: data.metric === 'avgRank' ? 0 : .25, pointRadius: 2, pointHitRadius: 12, borderWidth: 2,
+            borderColor: '#2e7d32', backgroundColor: 'rgba(46,125,50,.12)'
+          }];
+          if (data.metric === 'avgRank') {
+            const styles = [
+              { window: 25, color: '#2563eb', dash: [] },
+              { window: 50, color: '#d97706', dash: [6, 3] },
+              { window: 100, color: '#9333ea', dash: [2, 3] }
+            ];
+            styles.forEach(function(style) {
+              const values = (data.movingAverages || {})[String(style.window)] || [];
+              if (!values.some(function(value) { return value !== null; })) return;
+              datasets.push({
+                label: '直近' + style.window + '半荘平均', data: values,
+                borderColor: style.color, backgroundColor: style.color,
+                borderDash: style.dash, borderWidth: 2, tension: 0,
+                pointRadius: 1, pointHitRadius: 12, spanGaps: false
+              });
+            });
+          }
           const cfg = {
             type: 'line',
             data: {
               labels: data.labels || [],
-              datasets: [{
-                label: seriesLabel(data.metric),
-                data: data.series || [],
-                tension: .25,
-                pointRadius: 2,
-                pointHitRadius: 12,
-                borderWidth: 2,
-                borderColor: '#2e7d32',
-                backgroundColor: 'rgba(46,125,50,.12)'
-              }]
+              datasets: datasets
             },
             options: buildOptions(data.metric)
           };
           if(chart) chart.destroy();
           chart = new Chart(ctx, cfg);
         } catch(error) {
-          showAppMessage(error.message, 'グラフ表示エラー');
+          if (request === requestNumber) showAppMessage(error.message, 'グラフ表示エラー');
         } finally {
-          $btn.disabled = false;
-          $btn.textContent = '更新';
+          if (request === requestNumber) {
+            $btn.disabled = false;
+            $btn.textContent = '更新';
+          }
         }
       }
 
@@ -127,6 +147,7 @@
     .btn{min-width:100px;min-height:44px;padding:8px 14px;border:1px solid #1976d2;border-radius:8px;cursor:pointer;font-weight:700}
     .btn.primary{background:#1976d2;color:#fff}
     .btn:disabled{opacity:.65;cursor:wait}
+    .rank-hint{margin:12px 16px;color:#475569;font-size:13px;line-height:1.6}
     .chart-area{height:min(58vh,520px);min-height:360px;padding:18px}
     @media(max-width:768px){
       .chart-card{border-radius:10px}

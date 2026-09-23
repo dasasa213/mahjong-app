@@ -21,11 +21,19 @@ public class PairwiseRankStatsService {
         this.repository = repository;
     }
 
+    public List<Integer> years(long groupId) {
+        return repository.findYears(groupId);
+    }
+
     public List<String> userNames(long groupId) {
         return repository.findUserNames(groupId);
     }
 
     public Map<String, Map<String, PairwiseRankDiffCell>> matrix(long groupId, List<String> userNames) {
+        return matrix(groupId, userNames, null);
+    }
+
+    public Map<String, Map<String, PairwiseRankDiffCell>> matrix(long groupId, List<String> userNames, Integer year) {
         Map<String, Map<String, PairwiseRankDiffCell>> matrix = new LinkedHashMap<>();
         for (String rowName : userNames) {
             Map<String, PairwiseRankDiffCell> cols = new LinkedHashMap<>();
@@ -39,7 +47,7 @@ public class PairwiseRankStatsService {
             matrix.put(rowName, cols);
         }
 
-        for (PairwiseRankDiffRow row : repository.findRankDiffRows(groupId)) {
+        for (PairwiseRankDiffRow row : repository.findRankDiffRows(groupId, year)) {
             if (!matrix.containsKey(row.getRowUserName())) {
                 continue;
             }

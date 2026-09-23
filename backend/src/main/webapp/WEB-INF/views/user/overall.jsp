@@ -53,11 +53,13 @@
     </div>
     <c:url var="allUrl" value="/user/overall"><c:param name="period" value="all" /></c:url>
     <c:url var="recentUrl" value="/user/overall"><c:param name="period" value="recent100" /></c:url>
-    <c:url var="yearUrl" value="/user/overall"><c:param name="period" value="year" /></c:url>
     <nav class="overall-periods" aria-label="総合成績の集計期間">
       <a class="overall-period" href="${allUrl}" aria-current="${period == 'all' ? 'page' : 'false'}">通算</a>
       <a class="overall-period" href="${recentUrl}" aria-current="${period == 'recent100' ? 'page' : 'false'}">直近100半荘</a>
-      <a class="overall-period" href="${yearUrl}" aria-current="${period == 'year' ? 'page' : 'false'}">今年（${currentYear}年）</a>
+      <c:forEach var="y" items="${years}">
+        <c:url var="yearUrl" value="/user/overall"><c:param name="period" value="year" /><c:param name="year" value="${y}" /></c:url>
+        <a class="overall-period" href="${yearUrl}" aria-current="${period == 'year' and selectedYear == y ? 'page' : 'false'}">${y}年</a>
+      </c:forEach>
     </nav>
     <div id="period-description" class="period-description">
       <c:choose>
@@ -66,7 +68,7 @@
           <p>局数・和了率・副露率・立直率・放銃率は日単位の記録のため、直近100半荘では「—」と表示します。</p>
         </c:when>
         <c:when test="${period == 'year'}">
-          <p>${currentYear}年1月1日〜12月31日の成績です。年の切り替えは日本時間を基準にします。</p>
+          <p>${selectedYear}年1月1日〜12月31日の成績です。</p>
         </c:when>
         <c:otherwise><p>これまでのすべての成績です。</p></c:otherwise>
       </c:choose>
@@ -118,6 +120,7 @@
           </c:forEach>
         </tr>
 
+        <%-- 直近100戦平均は専用タブで確認するため非表示。
         <c:if test="${period == 'all'}">
         <!-- 直近100半荘の平均順位（小さいほど良いので色付けはしない） -->
         <tr>
@@ -133,6 +136,7 @@
         </tr>
 
         </c:if>
+        --%>
 
         <!-- 1位率〜4位率 -->
         <tr>

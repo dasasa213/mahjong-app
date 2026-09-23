@@ -29,13 +29,24 @@ public class OverallStatsController {
 
     @GetMapping
     public String page(HttpSession session, Model model,
-                       @RequestParam(name = "period", defaultValue = "all") String periodValue) {
+                       @RequestParam(name = "period", defaultValue = "all") String periodValue,
+                       @RequestParam(name = "year", required = false) Integer requestedYear) {
         Object gid = session.getAttribute("groupId");
         long groupId = (gid instanceof Number) ? ((Number) gid).longValue() : Long.parseLong(String.valueOf(gid));
 
         OverallPeriod period = OverallPeriod.fromValue(periodValue);
         int currentYear = Year.now(ZoneId.of("Asia/Tokyo")).getValue();
-        List<OverallStats> rows = service.list(groupId, period, currentYear);
+        List<Integer> years = service.years(groupId);
+        int selectedYear = requestedYear == null ? currentYear : requestedYear;
+        if (period == OverallPeriod.YEAR && !years.contains(selectedYear)) {
+            period = OverallPeriod.ALL;
+        }
+        if (period != OverallPeriod.YEAR) {
+            selectedYear = currentYear;
+        }
+        List<OverallStats> rows = service.list(groupId, period, selectedYear);
+        model.addAttribute("years", years);
+        model.addAttribute("selectedYear", selectedYear);
 
         // JSPで「行：指標／列：ユーザー名」にしたいので、ピボット用のMapを作る
         // keys: userName（列見出し）

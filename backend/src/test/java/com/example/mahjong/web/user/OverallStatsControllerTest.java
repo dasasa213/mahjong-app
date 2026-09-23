@@ -74,6 +74,23 @@ class OverallStatsControllerTest {
         assertEquals(OverallPeriod.ALL, service.period);
     }
 
+    @Test
+    void selectsHistoricalYear() throws Exception {
+        mvc.perform(get("/user/overall").param("period", "year").param("year", "2025").sessionAttr("groupId", 1L))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("period", "year"))
+                .andExpect(model().attribute("selectedYear", 2025));
+        assertEquals(2025, service.year);
+    }
+
+    @Test
+    void missingYearFallsBackToAllTime() throws Exception {
+        mvc.perform(get("/user/overall").param("period", "year").param("year", "1900").sessionAttr("groupId", 1L))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("period", "all"));
+        assertEquals(OverallPeriod.ALL, service.period);
+    }
+
     private static class StubStatsService extends OverallStatsService {
         private List<OverallStats> rows = List.of();
         private long groupId;
@@ -83,6 +100,11 @@ class OverallStatsControllerTest {
 
         StubStatsService() {
             super(null);
+        }
+
+        @Override
+        public List<Integer> years(long groupId) {
+            return List.of(Year.now(ZoneId.of("Asia/Tokyo")).getValue(), 2025);
         }
 
         @Override

@@ -9,7 +9,16 @@
       <span class="swipe-hint">横にスワイプして他のユーザーを表示できます</span>
     </div>
 
+    <nav class="year-tabs" aria-label="対人別成績の集計期間">
+      <c:url var="allUrl" value="/user/pairwise-rank" />
+      <a href="${allUrl}" aria-current="${empty selectedYear ? 'page' : 'false'}">通算</a>
+      <c:forEach var="y" items="${years}">
+        <c:url var="yearUrl" value="/user/pairwise-rank"><c:param name="year" value="${y}" /></c:url>
+        <a href="${yearUrl}" aria-current="${selectedYear == y ? 'page' : 'false'}">${y}年</a>
+      </c:forEach>
+    </nav>
     <div class="pairwise-note">
+      <c:if test="${not empty selectedYear}"><p>${selectedYear}年1月1日〜12月31日の対局が対象です。</p></c:if>
       <p>行と列のユーザーが同卓した半荘を対象に、行のユーザーの平均順位から列のユーザーの平均順位を引いた値です。</p>
       <div class="legend" aria-label="数値の見方">
         <span><i class="legend-good"></i>マイナス：行のユーザーが好成績</span>
@@ -48,6 +57,10 @@
   </section>
 
   <style>
+    .year-tabs{display:flex;flex-wrap:wrap;gap:8px;padding:12px 16px}
+    .year-tabs a{display:inline-flex;align-items:center;min-height:44px;padding:0 16px;border:1px solid #cbd5e1;border-radius:8px;color:#334155;text-decoration:none;font-weight:700}
+    .year-tabs a[aria-current="page"]{background:#2e7d32;border-color:#2e7d32;color:#fff}
+    .year-tabs a:focus-visible{outline:3px solid #1565c0;outline-offset:3px}
     .pairwise-card{background:#fff;border:1px solid #dfe3e8;border-radius:12px;overflow:hidden}
     .pairwise-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-bottom:1px solid #e5e7eb}
     .pairwise-heading h2{margin:0;font-size:1.05rem}
@@ -72,7 +85,11 @@
     .pairwise-table td.pos{color:#d32f2f;font-weight:700}
     .pairwise-table td.neg{color:#1565c0;font-weight:700}
     @media(max-width:768px){
-      .pairwise-card{border-radius:10px}
+      .year-tabs{display:flex;flex-wrap:wrap;gap:8px;padding:12px 16px}
+    .year-tabs a{display:inline-flex;align-items:center;min-height:44px;padding:0 16px;border:1px solid #cbd5e1;border-radius:8px;color:#334155;text-decoration:none;font-weight:700}
+    .year-tabs a[aria-current="page"]{background:#2e7d32;border-color:#2e7d32;color:#fff}
+    .year-tabs a:focus-visible{outline:3px solid #1565c0;outline-offset:3px}
+    .pairwise-card{border-radius:10px}
       .pairwise-heading{padding:12px;align-items:flex-start;flex-direction:column;gap:4px}
       .swipe-hint{display:block;text-align:left}
       .pairwise-note{padding:10px 12px}

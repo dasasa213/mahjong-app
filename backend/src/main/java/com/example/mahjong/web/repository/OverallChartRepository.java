@@ -1,6 +1,7 @@
 package com.example.mahjong.web.repository;
 
 import com.example.mahjong.web.model.GraphPoint;
+import com.example.mahjong.web.model.RankPoint;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -16,6 +17,19 @@ public class OverallChartRepository {
 
     public OverallChartRepository(JdbcTemplate jdbc) {
         this.jdbc = jdbc;
+    }
+
+    public List<RankPoint> loadRankHistory(String groupId, String userName) {
+        String sql = """
+                SELECT g.gamedate, r.rank_no
+                FROM daa_ranking r
+                JOIN daa_gamerecords g ON g.id = r.game_id
+                JOIN daa_user_knr u ON u.name = r.name AND u.groupid = g.groupid AND u.type = '2'
+                WHERE g.groupid = ? AND r.name = ?
+                ORDER BY g.gamedate, g.gameno, r.row_no, r.ranking_id
+                """;
+        return jdbc.query(sql, (rs, i) -> new RankPoint(
+                rs.getDate("gamedate").toLocalDate().format(DF), rs.getInt("rank_no")), groupId, userName);
     }
 
     /** 同一グループの「利用者のみ」名前一覧（type=2=利用者。管理者は除外） */
