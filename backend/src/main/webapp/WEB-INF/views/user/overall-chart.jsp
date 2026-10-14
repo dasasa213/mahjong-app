@@ -28,11 +28,19 @@
         </select>
       </label>
 
+      <label id="rankScaleControl" class="control-field rank-scale" for="rankScaleSelect" hidden>
+        <span>平均順位の縦軸</span>
+        <select id="rankScaleSelect" class="input">
+          <option value="auto" selected>自動（データに合わせる）</option>
+          <option value="fixed">固定（1.5〜3.5）</option>
+        </select>
+      </label>
+
       <button id="reloadBtn" class="btn primary" type="button">更新</button>
     </div>
 
-    <p id="rankHint" class="rank-hint" hidden>平均順位は半荘ごとに表示します。25・50・100半荘の移動平均線は、それぞれ必要な半荘数に達してから表示します。凡例を押すと線の表示を切り替えられます。</p>
-    <div class="chart-area">
+    <p id="rankHint" class="rank-hint" hidden>平均順位は半荘ごとに表示します。25・50・100半荘の移動平均線は、それぞれ必要な半荘数に達してから表示します。凡例を押すと線の表示を切り替えられます。縦軸の「自動」は表示中の線に合わせて調整します。プレイヤー同士を同じ目盛りで比べる場合は「固定」を選んでください。</p>
+    <div id="chartArea" class="chart-area">
       <canvas id="overallChart"></canvas>
     </div>
   </section>
@@ -42,6 +50,9 @@
     (function(){
       const $user = document.getElementById('userSelect');
       const $metric = document.getElementById('metricSelect');
+      const $scale = document.getElementById('rankScaleSelect');
+      const $scaleControl = document.getElementById('rankScaleControl');
+      const $area = document.getElementById('chartArea');
       const $btn = document.getElementById('reloadBtn');
       const ctx = document.getElementById('overallChart').getContext('2d');
       let chart;
@@ -55,13 +66,43 @@
         }
       }
 
-      function buildOptions(metric){
+      function rankBounds(datasets) {
+        if ($scale.value === 'fixed') return { min: 1.5, max: 3.5 };
+        let low = Infinity, high = -Infinity;
+        datasets.forEach(function(dataset) {
+          (dataset.data || []).forEach(function(value) {
+            if (typeof value === 'number' && Number.isFinite(value)) {
+              low = Math.min(low, value);
+              high = Math.max(high, value);
+            }
+          });
+        });
+        if (!Number.isFinite(low)) return { min: 1.5, max: 3.5 };
+        // Keep a minimum half-range before clamping to valid ranks (1 to 4).
+        const center = (low + high) / 2;
+        const halfRange = Math.max(0.2, (high - low) / 2 + 0.1);
+        return {
+          min: Math.max(1, Math.floor((center - halfRange) * 10) / 10),
+          max: Math.min(4, Math.ceil((center + halfRange) * 10) / 10)
+        };
+      }
+
+      function updateRankScale() {
+        if (!chart || $scaleControl.hidden) return;
+        const visible = chart.data.datasets.filter(function(dataset, index) {
+          return chart.isDatasetVisible(index);
+        });
+        Object.assign(chart.options.scales.y, rankBounds(visible));
+        chart.update();
+      }
+
+      function buildOptions(metric, datasets){
         const isAvg = metric === 'avgRank';
         const y = {
           beginAtZero: !isAvg,
           title: { display: true, text: isAvg ? '平均順位' : (metric === 'amount' ? '金額' : '点数') }
         };
-        if(isAvg){ y.min = 1.5; y.max = 3.5; }
+        if(isAvg){ Object.assign(y, rankBounds(datasets)); }
         return {
           responsive: true,
           maintainAspectRatio: false,
@@ -70,7 +111,13 @@
             x: { title: { display: true, text: isAvg ? '対局日・通算半荘数' : '対局日' } },
             y
           },
-          plugins: { legend: { display: true, labels: { usePointStyle: true } } }
+          plugins: { legend: {
+            display: true, labels: { usePointStyle: true },
+            onClick: function(event, item, legend) {
+              Chart.defaults.plugins.legend.onClick.call(this, event, item, legend);
+              if (isAvg) updateRankScale();
+            }
+          } }
         };
       }
 
@@ -86,6 +133,8 @@
           const data = await res.json();
           if (request !== requestNumber) return;
           document.getElementById('rankHint').hidden = data.metric !== 'avgRank';
+          $scaleControl.hidden = data.metric !== 'avgRank';
+          $area.classList.toggle('rank-chart', data.metric === 'avgRank');
           const cumulativeDataset = {
             label: seriesLabel(data.metric), data: data.series || [],
             tension: data.metric === 'avgRank' ? 0 : .25, pointRadius: 2, pointHitRadius: 12, borderWidth: 2,
@@ -110,7 +159,7 @@
                 label: '直近' + style.window + '半荘平均', data: values,
                 borderColor: style.color, backgroundColor: style.color,
                 borderDash: style.dash, borderWidth: 2, tension: 0,
-                pointRadius: 1, pointHitRadius: 12, spanGaps: false
+                pointRadius: 0, pointHoverRadius: 4, pointHitRadius: 12, spanGaps: false
               });
             });
           }
@@ -120,7 +169,7 @@
               labels: data.labels || [],
               datasets: datasets
             },
-            options: buildOptions(data.metric)
+            options: buildOptions(data.metric, datasets)
           };
           if(chart) chart.destroy();
           chart = new Chart(ctx, cfg);
@@ -134,6 +183,7 @@
         }
       }
 
+      $scale.addEventListener('change', updateRankScale);
       $btn.addEventListener('click', loadAndRender);
       $user.addEventListener('change', loadAndRender);
       $metric.addEventListener('change', loadAndRender);
@@ -146,8 +196,9 @@
     .chart-heading{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:14px 16px;border-bottom:1px solid #e5e7eb}
     .chart-heading h2{margin:0;font-size:1.05rem}
     .chart-heading span{color:#64748b;font-size:.85rem}
-    .controls{display:grid;grid-template-columns:minmax(180px,1fr) minmax(220px,1.4fr) auto;align-items:end;gap:12px;padding:16px;background:#f8fafc}
+    .controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));align-items:end;gap:12px;padding:16px;background:#f8fafc}
     .control-field{display:flex;flex-direction:column;gap:5px;color:#475569;font-size:.9rem;font-weight:600}
+    .rank-scale[hidden]{display:none}
     .input{width:100%;min-height:44px;padding:8px 10px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;font-size:16px}
     .input:focus{outline:3px solid rgba(37,99,235,.18);border-color:#2563eb}
     .btn{min-width:100px;min-height:44px;padding:8px 14px;border:1px solid #1976d2;border-radius:8px;cursor:pointer;font-weight:700}
@@ -155,12 +206,14 @@
     .btn:disabled{opacity:.65;cursor:wait}
     .rank-hint{margin:12px 16px;color:#475569;font-size:13px;line-height:1.6}
     .chart-area{height:min(58vh,520px);min-height:360px;padding:18px}
+    .chart-area.rank-chart{height:min(80vh,780px);min-height:540px}
     @media(max-width:768px){
       .chart-card{border-radius:10px}
       .chart-heading{align-items:flex-start;flex-direction:column;padding:12px}
       .controls{grid-template-columns:1fr;padding:12px}
       .btn{width:100%}
       .chart-area{height:52vh;min-height:320px;padding:10px 6px}
+      .chart-area.rank-chart{height:70vh;min-height:420px}
     }
   </style>
 </u:layout>
